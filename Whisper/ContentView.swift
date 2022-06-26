@@ -8,9 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
+	private let publicKey = "Public Key"
+	private let privateKey = "Private Key"
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+		TabView {
+			MessagesView()
+				.tabItem {
+					Label("信息", systemImage: "message")
+				}
+			ContactsView()
+				.tabItem {
+					Label("联系人", systemImage: "person.crop.circle")
+				}
+			SettingsView(publicKey: publicKey, privateKey: privateKey)
+				.tabItem {
+					Label("设置", systemImage: "gear")
+				}
+			
+		}
     }
 }
 

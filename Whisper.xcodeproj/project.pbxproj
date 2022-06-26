@@ -11,6 +11,12 @@
 		2BEC934F286869AB00B0BCCF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC934E286869AB00B0BCCF /* ContentView.swift */; };
 		2BEC9351286869AD00B0BCCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BEC9350286869AD00B0BCCF /* Assets.xcassets */; };
 		2BEC9354286869AD00B0BCCF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BEC9353286869AD00B0BCCF /* Preview Assets.xcassets */; };
+		2BEC935D28686D1700B0BCCF /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC935C28686D1700B0BCCF /* ContactsView.swift */; };
+		2BEC935F28686E5D00B0BCCF /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC935E28686E5D00B0BCCF /* MessagesView.swift */; };
+		2BEC9361286877EB00B0BCCF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC9360286877EB00B0BCCF /* SettingsView.swift */; };
+		2BEC9363286878C300B0BCCF /* ContactDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */; };
+		2BEC936528687B4B00B0BCCF /* ContactsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC936428687B4B00B0BCCF /* ContactsList.swift */; };
+		2BEC936728687C0700B0BCCF /* ContactRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC936628687C0700B0BCCF /* ContactRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +25,12 @@
 		2BEC934E286869AB00B0BCCF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2BEC9350286869AD00B0BCCF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BEC9353286869AD00B0BCCF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		2BEC935C28686D1700B0BCCF /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
+		2BEC935E28686E5D00B0BCCF /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
+		2BEC9360286877EB00B0BCCF /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailsView.swift; sourceTree = "<group>"; };
+		2BEC936428687B4B00B0BCCF /* ContactsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsList.swift; sourceTree = "<group>"; };
+		2BEC936628687C0700B0BCCF /* ContactRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,8 +47,8 @@
 		2BEC9340286869AA00B0BCCF = {
 			isa = PBXGroup;
 			children = (
-				2BEC934B286869AA00B0BCCF /* Whisper */,
 				2BEC934A286869AA00B0BCCF /* Products */,
+				2BEC934B286869AA00B0BCCF /* Whisper */,
 			);
 			sourceTree = "<group>";
 		};
@@ -52,9 +64,15 @@
 			isa = PBXGroup;
 			children = (
 				2BEC934C286869AB00B0BCCF /* WhisperApp.swift */,
+				2BEC936428687B4B00B0BCCF /* ContactsList.swift */,
 				2BEC934E286869AB00B0BCCF /* ContentView.swift */,
+				2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */,
 				2BEC9350286869AD00B0BCCF /* Assets.xcassets */,
 				2BEC9352286869AD00B0BCCF /* Preview Content */,
+				2BEC935C28686D1700B0BCCF /* ContactsView.swift */,
+				2BEC935E28686E5D00B0BCCF /* MessagesView.swift */,
+				2BEC9360286877EB00B0BCCF /* SettingsView.swift */,
+				2BEC936628687C0700B0BCCF /* ContactRow.swift */,
 			);
 			path = Whisper;
 			sourceTree = "<group>";
@@ -137,8 +155,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BEC9361286877EB00B0BCCF /* SettingsView.swift in Sources */,
+				2BEC9363286878C300B0BCCF /* ContactDetailsView.swift in Sources */,
+				2BEC935F28686E5D00B0BCCF /* MessagesView.swift in Sources */,
+				2BEC935D28686D1700B0BCCF /* ContactsView.swift in Sources */,
+				2BEC936528687B4B00B0BCCF /* ContactsList.swift in Sources */,
 				2BEC934F286869AB00B0BCCF /* ContentView.swift in Sources */,
 				2BEC934D286869AB00B0BCCF /* WhisperApp.swift in Sources */,
+				2BEC936728687C0700B0BCCF /* ContactRow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +291,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Whisper/Preview Content\"";
+				DEVELOPMENT_TEAM = U7W7348666;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -292,9 +317,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Whisper/Preview Content\"";
+				DEVELOPMENT_TEAM = U7W7348666;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -309,6 +336,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.twofei.Whisper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
