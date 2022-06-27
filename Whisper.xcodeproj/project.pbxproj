@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B9830E52868BADB000B26DE /* Curve25519.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9830E42868BADB000B26DE /* Curve25519.swift */; };
+		2BC11A9C2868C3000002D61D /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9B2868C3000002D61D /* WelcomeView.swift */; };
+		2BC11A9E286900A60002D61D /* NewContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9D286900A60002D61D /* NewContact.swift */; };
+		2BC11AA02869F4710002D61D /* ContactsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9F2869F4710002D61D /* ContactsList.swift */; };
 		2BEC934D286869AB00B0BCCF /* WhisperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC934C286869AB00B0BCCF /* WhisperApp.swift */; };
 		2BEC934F286869AB00B0BCCF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC934E286869AB00B0BCCF /* ContentView.swift */; };
 		2BEC9351286869AD00B0BCCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BEC9350286869AD00B0BCCF /* Assets.xcassets */; };
@@ -15,11 +19,14 @@
 		2BEC935F28686E5D00B0BCCF /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC935E28686E5D00B0BCCF /* MessagesView.swift */; };
 		2BEC9361286877EB00B0BCCF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC9360286877EB00B0BCCF /* SettingsView.swift */; };
 		2BEC9363286878C300B0BCCF /* ContactDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */; };
-		2BEC936528687B4B00B0BCCF /* ContactsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC936428687B4B00B0BCCF /* ContactsList.swift */; };
 		2BEC936728687C0700B0BCCF /* ContactRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC936628687C0700B0BCCF /* ContactRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2B9830E42868BADB000B26DE /* Curve25519.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Curve25519.swift; sourceTree = "<group>"; };
+		2BC11A9B2868C3000002D61D /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		2BC11A9D286900A60002D61D /* NewContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContact.swift; sourceTree = "<group>"; };
+		2BC11A9F2869F4710002D61D /* ContactsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsList.swift; sourceTree = "<group>"; };
 		2BEC9349286869AA00B0BCCF /* Whisper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Whisper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BEC934C286869AB00B0BCCF /* WhisperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperApp.swift; sourceTree = "<group>"; };
 		2BEC934E286869AB00B0BCCF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -29,7 +36,6 @@
 		2BEC935E28686E5D00B0BCCF /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
 		2BEC9360286877EB00B0BCCF /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailsView.swift; sourceTree = "<group>"; };
-		2BEC936428687B4B00B0BCCF /* ContactsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsList.swift; sourceTree = "<group>"; };
 		2BEC936628687C0700B0BCCF /* ContactRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -44,6 +50,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2B9830E62868BBC4000B26DE /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				2B9830E42868BADB000B26DE /* Curve25519.swift */,
+			);
+			path = Crypto;
+			sourceTree = "<group>";
+		};
+		2BC11A9A2868C2D40002D61D /* Welcome */ = {
+			isa = PBXGroup;
+			children = (
+				2BC11A9B2868C3000002D61D /* WelcomeView.swift */,
+			);
+			path = Welcome;
+			sourceTree = "<group>";
+		};
+		2BC11AA12869F7230002D61D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				2BEC9360286877EB00B0BCCF /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		2BEC9340286869AA00B0BCCF = {
 			isa = PBXGroup;
 			children = (
@@ -63,16 +93,19 @@
 		2BEC934B286869AA00B0BCCF /* Whisper */ = {
 			isa = PBXGroup;
 			children = (
+				2BC11AA12869F7230002D61D /* Settings */,
+				2BC11A9A2868C2D40002D61D /* Welcome */,
 				2BEC934C286869AB00B0BCCF /* WhisperApp.swift */,
-				2BEC936428687B4B00B0BCCF /* ContactsList.swift */,
 				2BEC934E286869AB00B0BCCF /* ContentView.swift */,
 				2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */,
 				2BEC9350286869AD00B0BCCF /* Assets.xcassets */,
 				2BEC9352286869AD00B0BCCF /* Preview Content */,
 				2BEC935C28686D1700B0BCCF /* ContactsView.swift */,
 				2BEC935E28686E5D00B0BCCF /* MessagesView.swift */,
-				2BEC9360286877EB00B0BCCF /* SettingsView.swift */,
 				2BEC936628687C0700B0BCCF /* ContactRow.swift */,
+				2B9830E62868BBC4000B26DE /* Crypto */,
+				2BC11A9D286900A60002D61D /* NewContact.swift */,
+				2BC11A9F2869F4710002D61D /* ContactsList.swift */,
 			);
 			path = Whisper;
 			sourceTree = "<group>";
@@ -158,11 +191,14 @@
 				2BEC9361286877EB00B0BCCF /* SettingsView.swift in Sources */,
 				2BEC9363286878C300B0BCCF /* ContactDetailsView.swift in Sources */,
 				2BEC935F28686E5D00B0BCCF /* MessagesView.swift in Sources */,
+				2BC11A9E286900A60002D61D /* NewContact.swift in Sources */,
 				2BEC935D28686D1700B0BCCF /* ContactsView.swift in Sources */,
-				2BEC936528687B4B00B0BCCF /* ContactsList.swift in Sources */,
 				2BEC934F286869AB00B0BCCF /* ContentView.swift in Sources */,
+				2BC11A9C2868C3000002D61D /* WelcomeView.swift in Sources */,
+				2B9830E52868BADB000B26DE /* Curve25519.swift in Sources */,
 				2BEC934D286869AB00B0BCCF /* WhisperApp.swift in Sources */,
 				2BEC936728687C0700B0BCCF /* ContactRow.swift in Sources */,
+				2BC11AA02869F4710002D61D /* ContactsList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

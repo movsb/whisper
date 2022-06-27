@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
+import CryptoKit
 
 struct ContentView: View {
-	private let publicKey = "Public Key"
-	private let privateKey = "Private Key"
-    var body: some View {
+	@State var privateKey: Curve25519.KeyAgreement.PrivateKey
+	
+	var body: some View {
 		TabView {
 			MessagesView()
 				.tabItem {
@@ -20,17 +21,18 @@ struct ContentView: View {
 				.tabItem {
 					Label("联系人", systemImage: "person.crop.circle")
 				}
-			SettingsView(publicKey: publicKey, privateKey: privateKey)
+			SettingsView(privateKey: $privateKey)
 				.tabItem {
 					Label("设置", systemImage: "gear")
 				}
 			
 		}
-    }
+	}
 }
 
 struct ContentView_Previews: PreviewProvider {
+	@State static private var privateKey = Curve25519.KeyAgreement.PrivateKey()
     static var previews: some View {
-        ContentView()
+        ContentView(privateKey: privateKey)
     }
 }

@@ -20,6 +20,6 @@ struct ContactRow: View {
 
 struct ContactRow_Previews: PreviewProvider {
     static var previews: some View {
-        ContactRow(contact: contacts[0])
+        ContactRow(contact: gContacts[0])
     }
 }
