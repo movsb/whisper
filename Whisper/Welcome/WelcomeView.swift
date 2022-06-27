@@ -24,9 +24,13 @@ struct WelcomeView: View {
 					
 				}
 				.padding()
+				Button("访问钥匙串") {
+					
+				}
+				.padding()
 			}
 		} else {
-			ContentView(privateKey: loginPrivateKey!)
+			ContentView(privateKey: loginPrivateKey!, saveAction: {})
 		}
     }
 }

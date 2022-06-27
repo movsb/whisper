@@ -8,30 +8,91 @@
 import SwiftUI
 import CryptoKit
 
-struct Contact : Identifiable {
+struct Contact : Identifiable, Codable {
 	var id: String
 	
 	var name: String
-	var avatar: String
-	var publicKey: Curve25519.KeyAgreement.PublicKey
+	var publicKey: String
+	
+	init(id: String, name: String, publicKey: String) {
+		self.id = id
+		self.name = name
+		self.publicKey = publicKey
+	}
 }
+
+class ContactStore: ObservableObject {
+	@Published var contacts: [Contact] = []
+	
+	private static func fileURL() throws -> URL {
+		try FileManager.default.url(for: .documentDirectory,
+			in: .userDomainMask,
+			appropriateFor: nil,
+			create: false)
+		.appendingPathComponent("contacts.data")
+	}
+	
+	static func load(completion: @escaping (Result<[Contact], Error>)->Void) {
+		DispatchQueue.global(qos: .background).async {
+			do {
+				let fileURL = try fileURL()
+				guard let file = try? FileHandle(forReadingFrom: fileURL) else {
+					DispatchQueue.main.async {
+						completion(.success([]))
+					}
+					return
+				}
+				let contacts = try JSONDecoder().decode([Contact].self, from: file.availableData)
+				DispatchQueue.main.async {
+					completion(.success(contacts))
+				}
+			} catch {
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+		}
+	}
+	
+	static func save(contacts: [Contact], completion: @escaping (Result<Int, Error>)->Void) {
+		DispatchQueue.global(qos: .background).async {
+			 do {
+				 let data = try JSONEncoder().encode(contacts)
+				 let outfile = try fileURL()
+				 try data.write(to: outfile)
+				 DispatchQueue.main.async {
+					 completion(.success(contacts.count))
+				 }
+			 } catch {
+				 DispatchQueue.main.async {
+					 completion(.failure(error))
+				 }
+			 }
+		 }
+	}
+}
+
 
 let p1 = Curve25519.KeyAgreement.PrivateKey()
 let p2 = Curve25519.KeyAgreement.PrivateKey()
+let p1p = p1.publicKey.rawRepresentation.base64EncodedString()
+let p2p = p2.publicKey.rawRepresentation.base64EncodedString()
 
 var gContacts: [Contact] = [
-	Contact(id: p1.publicKey.rawRepresentation.base64EncodedString(), name: "iPad", avatar: "ipad", publicKey: p1.publicKey),
-	Contact(id: p2.publicKey.rawRepresentation.base64EncodedString(), name: "iPhone", avatar: "iphone", publicKey: p2.publicKey),
+	Contact(id: p1p, name: "iPad", publicKey: p1p),
+	Contact(id: p2p, name: "iPhone", publicKey: p2p),
 ]
 
 struct ContactsView: View {
+	@Binding var contacts: [Contact]
     var body: some View {
-        ContactsList()
+        ContactsList(contacts: $contacts)
     }
 }
 
 struct ContactsView_Previews: PreviewProvider {
+	@State static private var contacts = gContacts
     static var previews: some View {
-        ContactsView()
+        ContactsView(contacts: $contacts)
     }
 }

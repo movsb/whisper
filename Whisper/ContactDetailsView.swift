@@ -11,18 +11,18 @@ struct ContactDetailsView: View {
 	@Binding var contact: Contact
 	var body: some View {
 		VStack {
-			Image(systemName: contact.avatar)
+			Image(systemName: "person")
 				.resizable()
 				.frame(width: 100, height: 100)
 				.padding()
 			VStack {
 				Text("他/她的公钥")
 					.font(.headline)
-				Text(contact.publicKey.rawRepresentation.base64EncodedString())
+				Text(contact.publicKey)
 					.padding()
 					.contextMenu(ContextMenu(menuItems: {
 						Button("复制", action: {
-							let s = contact.publicKey.rawRepresentation.base64EncodedString()
+							let s = contact.publicKey
 							UIPasteboard.general.string = s
 						})
 					}))

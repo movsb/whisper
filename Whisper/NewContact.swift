@@ -41,7 +41,8 @@ struct NewContactView: View {
 					if let data = Data(base64Encoded: pubKeyStr) {
 						do {
 							let pubKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: data)
-							contact = Contact(id: pubKey.rawRepresentation.base64EncodedString(), name: name, avatar: "person", publicKey: pubKey)
+							let encoded = pubKey.rawRepresentation.base64EncodedString()
+							contact = Contact(id: encoded, name: name, publicKey: encoded)
 							contacts.append(contact)
 							contact.id = UUID().uuidString
 							showCreate = false

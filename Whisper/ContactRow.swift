@@ -11,7 +11,7 @@ struct ContactRow: View {
 	@State var contact: Contact
     var body: some View {
 		HStack {
-			Label(contact.name, systemImage: contact.avatar)
+			Label(contact.name, systemImage: "person")
 			Spacer()
 		}
 		.padding()

@@ -10,8 +10,8 @@ import CryptoKit
 
 struct ContactsList: View {
 	@State var showCreate: Bool = false
-	@State var newContact: Contact = Contact(id: UUID().uuidString, name: "", avatar: "", publicKey: p1.publicKey)
-	@State var contacts = gContacts
+	@State var newContact: Contact = Contact(id: UUID().uuidString, name: "", publicKey: "")
+	@Binding var contacts: [Contact]
 	
 	var body: some View {
 		NavigationView {
@@ -41,7 +41,8 @@ struct ContactsList: View {
 }
 
 struct ContactsList_Previews: PreviewProvider {
+	@State static private var contacts = gContacts
 	static var previews: some View {
-		ContactsList()
+		ContactsList(contacts: $contacts)
 	}
 }
