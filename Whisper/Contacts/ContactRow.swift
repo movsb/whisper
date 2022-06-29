@@ -14,8 +14,7 @@ struct ContactRow: View {
 			Label(contact.name, systemImage: "person")
 			Spacer()
 		}
-		.padding()
-    }
+	}
 }
 
 struct ContactRow_Previews: PreviewProvider {

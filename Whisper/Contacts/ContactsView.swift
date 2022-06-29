@@ -8,7 +8,7 @@
 import SwiftUI
 import CryptoKit
 
-struct Contact : Identifiable, Codable {
+struct Contact : Identifiable, Codable, Hashable {
 	var id: String
 	
 	var name: String

@@ -17,6 +17,7 @@ struct WelcomeView: View {
 				Text("欢迎").font(.largeTitle).bold()
 				Button("创建新用户") {
 					loginPrivateKey = generateKeyPairs()
+					print(loginPrivateKey!.rawRepresentation.base64EncodedString())
 					loggedin = true
 				}
 				.padding()
@@ -26,6 +27,11 @@ struct WelcomeView: View {
 				.padding()
 				Button("访问钥匙串") {
 					
+				}
+				.padding()
+				Button("测试用户") {
+					loginPrivateKey = try! Curve25519.KeyAgreement.PrivateKey(rawRepresentation: Data(base64Encoded: "WEesyIFj3BdDanc31GExMCdrFdseLGgMF5zbOGPkSXE=")!)
+					loggedin = true
 				}
 				.padding()
 			}

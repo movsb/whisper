@@ -27,7 +27,7 @@ struct NewContactView: View {
 				}
 				Spacer()
 				Text("添加联系人")
-					.font(.title)
+					.bold()
 				Spacer()
 				Button("完成") {
 					if name == "" {
