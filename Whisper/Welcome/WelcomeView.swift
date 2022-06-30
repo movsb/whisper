@@ -16,7 +16,7 @@ struct WelcomeView: View {
 			VStack {
 				Text("欢迎").font(.largeTitle).bold()
 				Button("创建新用户") {
-					loginPrivateKey = generateKeyPairs()
+					loginPrivateKey = NewPrivateKey()
 					print(loginPrivateKey!.rawRepresentation.base64EncodedString())
 					loggedin = true
 				}
