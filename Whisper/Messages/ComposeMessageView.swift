@@ -20,6 +20,12 @@ struct MiniContactView: View {
 	}
 }
 
+extension UIApplication {
+	func endEditing() {
+		sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+	}
+}
+
 extension Data {
 	// https://stackoverflow.com/a/55092044/3628322
 	func toTemporaryFile(fileName: String) throws -> URL {
@@ -104,12 +110,12 @@ struct ComposeMessageView: View {
 					}
 					.padding(.bottom)
 				/// TextField 在这里会自动中文变英文，解决不了。
-//				TextField("", text: $message.title)
-//					.overlay {
-//						RoundedRectangle(cornerRadius: 4)
-//							.stroke(lineWidth: 0.5)
-//					}
-//					.padding(.bottom)
+				//				TextField("", text: $message.title)
+				//					.overlay {
+				//						RoundedRectangle(cornerRadius: 4)
+				//							.stroke(lineWidth: 0.5)
+				//					}
+				//					.padding(.bottom)
 				HStack {
 					Text("接收人：").bold()
 					Spacer()
@@ -165,6 +171,9 @@ struct ComposeMessageView: View {
 		}
 		.alert(alertMessage, isPresented: $showingAlert) {
 			Button("OK", role: .cancel) { }
+		}
+		.onTapGesture {
+			UIApplication.shared.endEditing()
 		}
 	}
 }

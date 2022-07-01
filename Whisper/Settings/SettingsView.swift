@@ -13,41 +13,52 @@ struct SettingsView: View {
 	
 	var body: some View {
 		NavigationView {
-			VStack {
-				Image(systemName: "person.badge.key.fill")
-					.resizable()
-					.frame(width: 100, height: 100)
-					.padding()
-				VStack {
-					Text("我的公钥")
-						.font(.headline)
-					Text(privateKey.publicKey.rawRepresentation.base64EncodedString())
+			List {
+				HStack {
+					Spacer()
+					Image(systemName: "person.badge.key.fill")
+						.resizable()
+						.frame(width: 100, height: 100)
 						.padding()
-					// https://stackoverflow.com/a/66903216/3628322
-						.contextMenu(ContextMenu(menuItems: {
-							Button("复制", action: {
-								let s = privateKey.publicKey.rawRepresentation.base64EncodedString()
-								UIPasteboard.general.string = s
-							})
-						}))
-						.lineLimit(1)
-					Text("我的私钥")
-						.font(.headline)
-					Text(privateKey.rawRepresentation.base64EncodedString())
-						.padding()
-						.contextMenu(ContextMenu(menuItems: {
-							Button("复制", action: {
-								let s = privateKey.rawRepresentation.base64EncodedString()
-								UIPasteboard.general.string = s
-							})
-						}))
-						.lineLimit(1)
+					Spacer()
 				}
-				Button("退出登录") {
+				SwiftUI.Section {
+					HStack {
+						Text("我的公钥")
+						Text(privateKey.publicKey.rawRepresentation.base64EncodedString())
+							// https://stackoverflow.com/a/66903216/3628322
+							.contextMenu(ContextMenu(menuItems: {
+								Button("复制", action: {
+									let s = privateKey.publicKey.rawRepresentation.base64EncodedString()
+									UIPasteboard.general.string = s
+								})
+							}))
+							.lineLimit(1)
+					}
+					HStack {
+						Text("我的私钥")
+						Text(privateKey.rawRepresentation.base64EncodedString())
+							.contextMenu(ContextMenu(menuItems: {
+								Button("复制", action: {
+									let s = privateKey.rawRepresentation.base64EncodedString()
+									UIPasteboard.general.string = s
+								})
+							}))
+							.lineLimit(1)
+					}
+				}
+				Button(action: {
 					
-				}
-				Spacer()
+				}, label: {
+					HStack {
+						Spacer()
+						Text("退出登录")
+							.foregroundColor(.red)
+						Spacer()
+					}
+				})
 			}
+			.listStyle(.grouped)
 			.navigationTitle("设置")
 			.navigationBarTitleDisplayMode(.inline)
 		}

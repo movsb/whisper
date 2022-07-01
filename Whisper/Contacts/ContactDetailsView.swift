@@ -11,25 +11,38 @@ struct ContactDetailsView: View {
 	@Binding var contact: Contact
 	var body: some View {
 		VStack {
-			Image(systemName: "person")
-				.resizable()
-				.frame(width: 100, height: 100)
-				.padding()
-			VStack {
-				Text("他/她的公钥")
-					.font(.headline)
-				Text(contact.publicKey)
+			HStack {
+				Spacer()
+				Image(systemName: "person")
+					.resizable()
+					.frame(width: 100, height: 100)
 					.padding()
-					.contextMenu(ContextMenu(menuItems: {
-						Button("复制", action: {
-							let s = contact.publicKey
-							UIPasteboard.general.string = s
-						})
-					}))
-					.lineLimit(1)
+				Spacer()
 			}
-			Spacer()
+			List {
+				SwiftUI.Section {
+					HStack {
+						Text("名字")
+						Spacer()
+						Text(contact.name)
+					}
+					HStack {
+						Text("公钥")
+						Spacer()
+						Text(contact.publicKey)
+							.contextMenu(ContextMenu(menuItems: {
+								Button("复制", action: {
+									let s = contact.publicKey
+									UIPasteboard.general.string = s
+								})
+							}))
+							.lineLimit(1)
+					}
+				}
+			}
+			.listStyle(.grouped)
 		}
+		.navigationTitle("详情")
     }
 }
 

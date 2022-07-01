@@ -19,6 +19,27 @@ struct NewContactView: View {
 	@FocusState private var nameFocused: Bool
 	@FocusState private var pubKeyFocused: Bool
 	
+	private func onSubmit() {
+		let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+		if trimmedName == "" {
+			alertMessage = "名字不应为空"
+			showingAlert = true
+			return
+		}
+		pubKeyStr = gPrivateKey.publicKey.String()
+		do {
+			let pubKey = try PublicKey.fromString(s: pubKeyStr)
+			contact = Contact(id: pubKey.String(), name: name, publicKey: pubKey.String())
+			contacts.append(contact)
+			contact.id = UUID().uuidString
+			showCreate = false
+		} catch {
+			alertMessage = "无效的公钥（\(error)）"
+			showingAlert = true
+			return
+		}
+	}
+	
 	var body: some View {
 		VStack {
 			HStack {
@@ -30,52 +51,37 @@ struct NewContactView: View {
 					.bold()
 				Spacer()
 				Button("完成") {
-					if name == "" {
-						alertMessage = "名字不应为空"
-						showingAlert = true
-						return
-					}
-					let test = Curve25519.KeyAgreement.PrivateKey().publicKey.rawRepresentation.base64EncodedString()
-					print(test)
-					pubKeyStr = test
-					if let data = Data(base64Encoded: pubKeyStr) {
-						do {
-							let pubKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: data)
-							let encoded = pubKey.rawRepresentation.base64EncodedString()
-							contact = Contact(id: encoded, name: name, publicKey: encoded)
-							contacts.append(contact)
-							contact.id = UUID().uuidString
-							showCreate = false
-						} catch {
-							alertMessage = "无效的公钥（\(error)）"
-							showingAlert = true
-							return
-						}
-					} else {
-						alertMessage = "无效的公钥"
-						showingAlert = true
-						return
-					}
+					onSubmit()
 				}
 				.alert(isPresented: $showingAlert) {
 					Alert(title: Text("错误"), message: Text("\(alertMessage)"))
 				}
 			}
+			.padding(.bottom)
 			HStack {
 				Image(systemName: "person").frame(width: 30).aspectRatio(contentMode: .fit)
 				TextField("名字", text: $name)
 					.padding(.vertical)
 					.focused($nameFocused)
+					.onSubmit {
+						pubKeyFocused = true
+					}
 			}
 			HStack {
 				Image(systemName: "key").frame(width: 30).aspectRatio(contentMode: .fit)
 				TextField("公钥", text: $pubKeyStr)
 					.padding(.vertical)
 					.focused($pubKeyFocused)
+					.onSubmit {
+						onSubmit()
+					}
 			}
 			Spacer()
 		}
 		.padding()
+		.onAppear {
+			nameFocused = true
+		}
 	}
 }
 

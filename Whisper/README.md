@@ -15,3 +15,12 @@
 * 时间格式参考：[NSDateFormatter.com - Live Date Formatting Playground for Swift](https://nsdateformatter.com/#reference)
 * 时间格式化：[How to Convert a Date to a String In Swift](https://cocoacasts.com/swift-fundamentals-how-to-convert-a-date-to-a-string-in-swift)
 
+添加到共享页面：
+
+* [ios - How to add my app to the share sheet action - Stack Overflow](https://stackoverflow.com/a/46882011/3628322)
+* [How to create a Share Extension in Swift - MiddlewareExpert](https://middlewareworld.org/2021/05/07/how-to-create-a-share-extension-in-swift/)
+
+
+隐藏键盘：
+
+* [ios - How to hide keyboard when using SwiftUI? - Stack Overflow](https://stackoverflow.com/a/56496669/3628322)

@@ -15,6 +15,11 @@ extension PublicKey {
 	func String() -> String {
 		return self.rawRepresentation.base64EncodedString()
 	}
+	static func fromString(s: String) throws -> PublicKey {
+		let data = Data(base64Encoded: s.trimmingCharacters(in: .whitespacesAndNewlines))
+		let pubKey = try PublicKey(rawRepresentation: data!)
+		return pubKey
+	}
 }
 
 extension PrivateKey {
