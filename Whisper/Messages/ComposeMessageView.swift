@@ -23,10 +23,26 @@ struct MiniContactView: View {
 struct ComposeMessageView: View {
 	@Binding var message: Message
 	
+	@State private var showingAlert = false
+	@State private var alertMessage = ""
+	
 	func shareButton() {
-			let url = URL(string: "https://designcode.io")
-			let activityController = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
+		if message.receipients.count <= 0 {
+			alertMessage = "请选择接收人"
+			showingAlert = true
+			return
+		}
+		
+		let body = message.title + "\0" + message.content
+		do {
+			let file = try NewFile(sender: gPrivateKey, recipients: [gPrivateKey.publicKey], message: body)
+			let base64 = file.base64()
+			
+			let activityController = UIActivityViewController(activityItems: [base64], applicationActivities: nil)
 			UIApplication.shared.windows.first?.rootViewController!.present(activityController, animated: true, completion: nil)
+		} catch {
+			fatalError(error.localizedDescription)
+		}
 	}
 	
 	@Binding var userContacts: [Contact]
@@ -120,7 +136,10 @@ struct ComposeMessageView: View {
 				})
 			}
 		}
-    }
+		.alert(alertMessage, isPresented: $showingAlert) {
+			Button("OK", role: .cancel) { }
+		}
+	}
 }
 
 struct ComposeMessageView_Previews: PreviewProvider {

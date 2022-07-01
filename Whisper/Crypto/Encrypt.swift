@@ -7,7 +7,8 @@
 
 import Foundation
 
-let kFileKeySize = 16
+// 256位
+let kFileKeySize = 32
 
 enum CryptError: Error {
 	case Random
@@ -29,7 +30,16 @@ struct Section {
 	var publicKey: PublicKey
 	
 	// 用共享密钥加密后的文件密钥
-	var encryptedFileKey: Data
+	var encryptedFileKey: [UInt8]
+}
+
+extension Section {
+	func bytes() -> [UInt8] {
+		var data = Data()
+		data.append(self.publicKey.rawRepresentation)
+		data.append(contentsOf: self.encryptedFileKey)
+		return [UInt8](data)
+	}
 }
 
 // 文件头
@@ -44,4 +54,40 @@ struct File {
 	
 	// 已加密数据
 	var data: Data
+}
+
+extension File {
+	func bytes() -> [UInt8] {
+		var data = Data()
+		data.append(Data(self.fileHeader.utf8))
+		data.append(contentsOf: [UInt8](arrayLiteral: UInt8(self.sections.count)))
+		for s in self.sections {
+			let secData = s.bytes()
+			data.append(contentsOf: secData)
+		}
+		data.append(self.data)
+		return [UInt8](data)
+	}
+	func base64() -> String {
+		let data = Data(self.bytes())
+		return data.base64EncodedString()
+	}
+}
+
+func NewFile(sender: PrivateKey, recipients: [PublicKey], message: String) throws -> File {
+	let fileKey = try NewFileKey()
+	
+	// TODO
+	// 接收人的个数范围：(0, 255]
+	
+	var sections = [Section]()
+	for r in recipients {
+		let encryptedFileKey = try EncryptFileKey(sender: sender, receiver: r, fileKey: fileKey)
+		let section = Section(publicKey: r, encryptedFileKey: encryptedFileKey)
+		sections.append(section)
+	}
+	
+	let data = try EncryptMessage(fileKey: fileKey, message: message)
+	
+	return File(fileHeader: kFileHeader, sections: sections, data: Data(data))
 }

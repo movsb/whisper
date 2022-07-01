@@ -8,6 +8,8 @@
 import SwiftUI
 import CryptoKit
 
+let gPrivateKey = try! Curve25519.KeyAgreement.PrivateKey(rawRepresentation: Data(base64Encoded: "WEesyIFj3BdDanc31GExMCdrFdseLGgMF5zbOGPkSXE=")!)
+
 struct WelcomeView: View {
 	@State private var loggedin = false
 	@State private var loginPrivateKey: Curve25519.KeyAgreement.PrivateKey?
@@ -30,7 +32,7 @@ struct WelcomeView: View {
 				}
 				.padding()
 				Button("测试用户") {
-					loginPrivateKey = try! Curve25519.KeyAgreement.PrivateKey(rawRepresentation: Data(base64Encoded: "WEesyIFj3BdDanc31GExMCdrFdseLGgMF5zbOGPkSXE=")!)
+					loginPrivateKey = gPrivateKey
 					loggedin = true
 				}
 				.padding()

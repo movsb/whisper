@@ -44,4 +44,18 @@ final class EncryptTests: XCTestCase {
 		let decrypted = try DecryptMessage(encrypted: encrypted, fileKey: fileKey)
 		print(decrypted)
 	}
+	func testSectionBytes() throws {
+		let pri = NewPrivateKey()
+		let fileKey = try NewFileKey()
+		let encryptedFileKey = try EncryptFileKey(sender: pri, receiver: pri.publicKey, fileKey: fileKey)
+		let section = Section(publicKey: pri.publicKey, encryptedFileKey: encryptedFileKey)
+		print(section.bytes())
+	}
+	func testNewFile() throws {
+		let pri = NewPrivateKey()
+		let recipients = [pri.publicKey]
+		let file = try NewFile(sender: pri, recipients: recipients, message: "雪儿")
+		let bytesData = Data(file.bytes())
+		print(bytesData.base64EncodedString())
+	}
 }
