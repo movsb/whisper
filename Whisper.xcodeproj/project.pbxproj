@@ -111,13 +111,6 @@
 			path = Archive;
 			sourceTree = "<group>";
 		};
-		2B6C8CA5286E030D00A1CB8F /* Go */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Go;
-			sourceTree = "<group>";
-		};
 		2B6C8CB3286E182800A1CB8F /* WhisperTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -173,7 +166,6 @@
 		2BEC934B286869AA00B0BCCF /* Whisper */ = {
 			isa = PBXGroup;
 			children = (
-				2B6C8CA5286E030D00A1CB8F /* Go */,
 				2B6C8CA0286DEEB500A1CB8F /* Archive */,
 				2B088510286B3DC100997C1D /* Contacts */,
 				2B62169D286A2E0B00106F1B /* Messages */,
