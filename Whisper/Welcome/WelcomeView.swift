@@ -27,10 +27,6 @@ struct WelcomeView: View {
 					
 				}
 				.padding()
-				Button("访问钥匙串") {
-					
-				}
-				.padding()
 				Button("测试用户") {
 					loginPrivateKey = gPrivateKey
 					loggedin = true
@@ -38,7 +34,7 @@ struct WelcomeView: View {
 				.padding()
 			}
 		} else {
-			ContentView(privateKey: loginPrivateKey!, saveAction: {})
+			ContentView(privateKey: loginPrivateKey!, loggedIn: $loggedin, saveAction: {})
 		}
     }
 }

@@ -24,3 +24,8 @@
 隐藏键盘：
 
 * [ios - How to hide keyboard when using SwiftUI? - Stack Overflow](https://stackoverflow.com/a/56496669/3628322)
+
+FaceID：
+
+* [Using Touch ID and Face ID with SwiftUI - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/using-touch-id-and-face-id-with-swiftui)
+

@@ -132,6 +132,7 @@ struct ComposeMessageView: View {
 						contactsToShow = userContacts + messageContacts.filter { elem in
 							!userContacts.contains { $0.id == elem.id }
 						}
+						UIApplication.shared.endEditing()
 						showSelectContacts = true
 					}, label: {
 						Image(systemName: "plus")
@@ -164,7 +165,10 @@ struct ComposeMessageView: View {
 			.navigationBarTitle("编辑消息")
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
-				Button(action: shareButton, label: {
+				Button(action: {
+					UIApplication.shared.endEditing()
+					shareButton()
+				}, label: {
 					Image(systemName: "square.and.arrow.up")
 				})
 			}

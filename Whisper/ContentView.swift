@@ -12,6 +12,7 @@ struct ContentView: View {
 	@State var privateKey: Curve25519.KeyAgreement.PrivateKey
 	@StateObject private var contactStore = ContactStore()
 	@StateObject private var messageStore = MessageStore()
+	@Binding var loggedIn: Bool
 	@Environment(\.scenePhase) private var scenePhase
 	
 	let saveAction: ()->Void
@@ -32,7 +33,7 @@ struct ContentView: View {
 				.tabItem {
 					Label("联系人", systemImage: "person.crop.circle")
 				}
-			SettingsView(privateKey: $privateKey)
+			SettingsView(loggedIn: $loggedIn, privateKey: $privateKey)
 				.tabItem {
 					Label("设置", systemImage: "gear")
 				}
@@ -77,8 +78,9 @@ struct ContentView: View {
 }
 
 struct ContentView_Previews: PreviewProvider {
-	@State static private var privateKey = Curve25519.KeyAgreement.PrivateKey()
+	@State static private var privateKey = NewPrivateKey()
+	@State static private var loggedIn = true
     static var previews: some View {
-		ContentView(privateKey: privateKey, saveAction: {})
+		ContentView(privateKey: privateKey, loggedIn: $loggedIn, saveAction: {})
     }
 }

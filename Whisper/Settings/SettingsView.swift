@@ -9,7 +9,9 @@ import SwiftUI
 import CryptoKit
 
 struct SettingsView: View {
-	@Binding var privateKey: Curve25519.KeyAgreement.PrivateKey
+	@Binding var loggedIn: Bool
+	@Binding var privateKey: PrivateKey
+	@State private var alertSignout = false
 	
 	var body: some View {
 		NavigationView {
@@ -48,7 +50,7 @@ struct SettingsView: View {
 					}
 				}
 				Button(action: {
-					
+					alertSignout = true
 				}, label: {
 					HStack {
 						Spacer()
@@ -57,6 +59,16 @@ struct SettingsView: View {
 						Spacer()
 					}
 				})
+				.alert(isPresented: $alertSignout) {
+					Alert(
+						title: Text("确认退出登录？"),
+						message: Text("如果你忘记了私钥，你将不能登录此帐号。请在确认退出前妥善保管你的私钥。"),
+						primaryButton: .destructive(Text("退出登录")) {
+							loggedIn = false
+						},
+						secondaryButton: .cancel()
+					)
+				}
 			}
 			.listStyle(.grouped)
 			.navigationTitle("设置")
@@ -66,8 +78,9 @@ struct SettingsView: View {
 }
 
 struct SettingsView_Previews: PreviewProvider {
-	@State static private var privateKey = Curve25519.KeyAgreement.PrivateKey()
+	@State static private var privateKey = NewPrivateKey()
+	@State static private var loggedIn = false
     static var previews: some View {
-		SettingsView(privateKey: $privateKey)
+		SettingsView(loggedIn: $loggedIn, privateKey: $privateKey)
     }
 }
