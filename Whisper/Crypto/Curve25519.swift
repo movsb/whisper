@@ -11,20 +11,56 @@ import CryptoKit
 typealias PublicKey = Curve25519.KeyAgreement.PublicKey
 typealias PrivateKey = Curve25519.KeyAgreement.PrivateKey
 
+extension Data {
+	static func fromBase64URL(b: String) -> Data? {
+		var s = b.replacingOccurrences(of: "-", with: "+")
+		s = s.replacingOccurrences(of: "_", with: "/")
+		while s.count % 4 != 0 {
+			s = s.appending("=")
+		}
+		guard let data = Data(base64Encoded: s) else {
+			return nil
+		}
+		return data
+	}
+	func toBase64URL() -> String {
+		var s = self.base64EncodedString()
+		s = s.replacingOccurrences(of: "+", with: "-")
+		s = s.replacingOccurrences(of: "/", with: "_")
+		s = s.replacingOccurrences(of: "=", with: "")
+		return s
+	}
+}
+
 extension PublicKey {
 	func String() -> String {
-		return self.rawRepresentation.base64EncodedString()
+		return self.rawRepresentation.toBase64URL()
 	}
-	static func fromString(s: String) throws -> PublicKey {
-		let data = Data(base64Encoded: s.trimmingCharacters(in: .whitespacesAndNewlines))
-		let pubKey = try PublicKey(rawRepresentation: data!)
-		return pubKey
+	static func fromString(s: String) -> PublicKey? {
+		guard let d = Data.fromBase64URL(b: s.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+			return nil
+		}
+		do {
+			return try PublicKey(rawRepresentation: d)
+		} catch {
+			return nil
+		}
 	}
 }
 
 extension PrivateKey {
 	func String() -> String {
-		return self.rawRepresentation.base64EncodedString()
+		return self.rawRepresentation.toBase64URL()
+	}
+	static func fromString(s: String) -> PrivateKey? {
+		guard let d = Data.fromBase64URL(b: s.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+			return nil
+		}
+		do {
+			return try PrivateKey(rawRepresentation: d)
+		} catch {
+			return nil
+		}
 	}
 }
 

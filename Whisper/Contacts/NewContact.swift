@@ -7,15 +7,22 @@
 
 import SwiftUI
 import CryptoKit
+import SFSymbolsPicker
 
 struct NewContactView: View {
 	@State private var name: String = ""
 	@State private var pubKeyStr: String = ""
+	
+	@State private var iconSelected: String = "person"
+	@State private var editAvatar: Bool = false
+	
 	@Binding var contact: Contact
 	@Binding var contacts: [Contact]
 	@Binding var showCreate: Bool
+	
 	@State private var showingAlert = false
 	@State private var alertMessage: String = ""
+	
 	@FocusState private var nameFocused: Bool
 	@FocusState private var pubKeyFocused: Bool
 	
@@ -26,18 +33,16 @@ struct NewContactView: View {
 			showingAlert = true
 			return
 		}
-		pubKeyStr = gPrivateKey.publicKey.String()
-		do {
-			let pubKey = try PublicKey.fromString(s: pubKeyStr)
-			contact = Contact(id: pubKey.String(), name: name, publicKey: pubKey.String())
-			contacts.append(contact)
-			contact.id = UUID().uuidString
-			showCreate = false
-		} catch {
-			alertMessage = "无效的公钥（\(error)）"
+		pubKeyStr = NewPrivateKey().publicKey.String()
+		guard let pubKey = PublicKey.fromString(s: pubKeyStr) else {
+			alertMessage = "无效的公钥"
 			showingAlert = true
 			return
 		}
+		contact = Contact(id: pubKey.String(), name: name, publicKey: pubKey.String(), avatar: iconSelected)
+		contacts.append(contact)
+		contact.id = UUID().uuidString
+		showCreate = false
 	}
 	
 	var body: some View {
@@ -58,6 +63,20 @@ struct NewContactView: View {
 				}
 			}
 			.padding(.bottom)
+			
+			Button(action: {
+				editAvatar = true
+			}, label: {
+				Image(systemName: iconSelected)
+					.resizable()
+					.frame(width: 100, height: 100)
+					.padding()
+					.foregroundColor(.accentColor)
+			})
+			.sheet(isPresented: $editAvatar, content: {
+				SFSymbolsView(iconSelected: $iconSelected, isPresented: $editAvatar)
+			})
+			
 			HStack {
 				Image(systemName: "person").frame(width: 30).aspectRatio(contentMode: .fit)
 				TextField("名字", text: $name)

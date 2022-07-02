@@ -27,11 +27,11 @@ struct SettingsView: View {
 				SwiftUI.Section {
 					HStack {
 						Text("我的公钥")
-						Text(privateKey.publicKey.rawRepresentation.base64EncodedString())
+						Text(privateKey.publicKey.String())
 							// https://stackoverflow.com/a/66903216/3628322
 							.contextMenu(ContextMenu(menuItems: {
 								Button("复制", action: {
-									let s = privateKey.publicKey.rawRepresentation.base64EncodedString()
+									let s = privateKey.publicKey.String()
 									UIPasteboard.general.string = s
 								})
 							}))
@@ -39,10 +39,10 @@ struct SettingsView: View {
 					}
 					HStack {
 						Text("我的私钥")
-						Text(privateKey.rawRepresentation.base64EncodedString())
+						Text(privateKey.String())
 							.contextMenu(ContextMenu(menuItems: {
 								Button("复制", action: {
-									let s = privateKey.rawRepresentation.base64EncodedString()
+									let s = privateKey.String()
 									UIPasteboard.general.string = s
 								})
 							}))

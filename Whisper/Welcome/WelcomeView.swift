@@ -8,18 +8,22 @@
 import SwiftUI
 import CryptoKit
 
-let gPrivateKey = try! Curve25519.KeyAgreement.PrivateKey(rawRepresentation: Data(base64Encoded: "WEesyIFj3BdDanc31GExMCdrFdseLGgMF5zbOGPkSXE=")!)
+let gPrivateKey = PrivateKey.fromString(s: "WEesyIFj3BdDanc31GExMCdrFdseLGgMF5zbOGPkSXE=")!
 
 struct WelcomeView: View {
 	@State private var loggedin = false
-	@State private var loginPrivateKey: Curve25519.KeyAgreement.PrivateKey?
+	@State private var loginPrivateKey: PrivateKey = NewPrivateKey()
 	var body: some View {
 		if !loggedin {
 			VStack {
-				Text("欢迎").font(.largeTitle).bold()
+				Text("欢迎").font(.title).bold()
+					.padding()
+				Text("Whisper")
+					.font(.largeTitle)
+					.bold()
+					.foregroundColor(.accentColor)
 				Button("创建新用户") {
 					loginPrivateKey = NewPrivateKey()
-					print(loginPrivateKey!.rawRepresentation.base64EncodedString())
 					loggedin = true
 				}
 				.padding()
@@ -34,7 +38,7 @@ struct WelcomeView: View {
 				.padding()
 			}
 		} else {
-			ContentView(privateKey: loginPrivateKey!, loggedIn: $loggedin, saveAction: {})
+			ContentView(privateKey: loginPrivateKey, loggedIn: $loggedin, saveAction: {})
 		}
     }
 }

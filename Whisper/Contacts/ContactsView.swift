@@ -13,11 +13,16 @@ struct Contact : Identifiable, Codable, Hashable {
 	
 	var name: String
 	var publicKey: String
+	var avatar: String = "person"
 	
 	init(id: String, name: String, publicKey: String) {
+		self.init(id: id, name: name, publicKey: publicKey, avatar: "person")
+	}
+	init(id: String, name: String, publicKey: String, avatar: String) {
 		self.id = id
 		self.name = name
 		self.publicKey = publicKey
+		self.avatar = avatar
 	}
 }
 
@@ -75,8 +80,8 @@ class ContactStore: ObservableObject {
 
 let p1 = Curve25519.KeyAgreement.PrivateKey()
 let p2 = Curve25519.KeyAgreement.PrivateKey()
-let p1p = p1.publicKey.rawRepresentation.base64EncodedString()
-let p2p = p2.publicKey.rawRepresentation.base64EncodedString()
+let p1p = p1.publicKey.String()
+let p2p = p2.publicKey.String()
 
 var gContacts: [Contact] = [
 	Contact(id: p1p, name: "iPad", publicKey: p1p),

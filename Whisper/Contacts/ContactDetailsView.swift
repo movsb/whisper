@@ -13,7 +13,7 @@ struct ContactDetailsView: View {
 		VStack {
 			HStack {
 				Spacer()
-				Image(systemName: "person")
+				Image(systemName: contact.avatar)
 					.resizable()
 					.frame(width: 100, height: 100)
 					.padding()
