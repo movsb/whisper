@@ -43,7 +43,7 @@ extension Section {
 }
 
 // 文件头
-let kFileHeader = "Whipser/1.0\n"
+public let kFileHeader = "Whipser/1.0\n"
 
 struct File {
 	// 文件头部标识

@@ -15,12 +15,6 @@
 * 时间格式参考：[NSDateFormatter.com - Live Date Formatting Playground for Swift](https://nsdateformatter.com/#reference)
 * 时间格式化：[How to Convert a Date to a String In Swift](https://cocoacasts.com/swift-fundamentals-how-to-convert-a-date-to-a-string-in-swift)
 
-添加到共享页面：
-
-* [ios - How to add my app to the share sheet action - Stack Overflow](https://stackoverflow.com/a/46882011/3628322)
-* [How to create a Share Extension in Swift - MiddlewareExpert](https://middlewareworld.org/2021/05/07/how-to-create-a-share-extension-in-swift/)
-
-
 隐藏键盘：
 
 * [ios - How to hide keyboard when using SwiftUI? - Stack Overflow](https://stackoverflow.com/a/56496669/3628322)
@@ -29,3 +23,28 @@ FaceID：
 
 * [Using Touch ID and Face ID with SwiftUI - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/using-touch-id-and-face-id-with-swiftui)
 
+
+## 07.03
+
+Share Extension：
+
+* [ios - How to add my app to the share sheet action - Stack Overflow](https://stackoverflow.com/a/46882011/3628322)
+* [How to create a Share Extension in Swift - MiddlewareExpert](https://middlewareworld.org/2021/05/07/how-to-create-a-share-extension-in-swift/)
+  * 提取分享对象类型
+  * 播放视频
+* [Sharing data between iOS apps and app extensions • The Atomic Birdhouse](https://www.atomicbird.com/blog/sharing-with-app-extensions/)
+  * [atomicbird/iOS-Extension-Demo: Demonstration of creating iOS "today" and "share" extensions](https://github.com/atomicbird/iOS-Extension-Demo)
+* [Blog - Building an iOS share extension programmatically in Swift · Hello Code.](https://blog.hellocode.co/post/share-extension/)
+  * 讲了 @objc 的使用。
+* [Implementing share extensions in Swift | by Oluwadamisi Pikuda | Medium](https://medium.com/@damisipikuda/how-to-receive-a-shared-content-in-an-ios-application-4d5964229701)
+* [iOS Share extension — Swift 5.1. Share contents into your app in a few… | by Fabio Pelizzola | Mac O’Clock | Medium](https://medium.com/macoclock/ios-share-extension-swift-5-1-1606263746b)
+* [Airlist - News, Updates, and Releases](https://airlist.app/blog/swiftui-share-extension)
+* [(126) UIHostingController in SwiftUI 2020 (Use in UIViewController) - How To Bridge UIKit with SwiftUI. - YouTube](https://www.youtube.com/watch?v=z_9EOGDw5uk)
+  * 如何在 Share Extension 里面使用 SwiftUI
+* [Sharing information between iOS app and an extension](https://rderik.com/blog/sharing-information-between-ios-app-and-an-extension/)
+  * 比较全面的文档
+
+语言：
+
+* [What Is The Difference Between Try, Try?, And Try!](https://cocoacasts.com/what-is-the-difference-between-try-try-and-try)
+  * 很清晰的文档讲解了几种 `try` 的区别。
