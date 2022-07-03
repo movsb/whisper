@@ -52,11 +52,7 @@ struct ContentView: View {
 				case .failure(let error):
 					fatalError(error.localizedDescription)
 				case .success(let messages):
-					if messages.isEmpty {
-						messageStore.messages = ContentView.gMessages
-					} else {
-						messageStore.messages = messages
-					}
+					messageStore.messages = messages
 				}
 			}
 		}

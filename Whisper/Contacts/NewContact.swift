@@ -41,7 +41,6 @@ struct NewContactView: View {
 		}
 		contact = Contact(id: pubKey.String(), name: name, publicKey: pubKey.String(), avatar: iconSelected)
 		contacts.append(contact)
-		contact.id = UUID().uuidString
 		showCreate = false
 	}
 	

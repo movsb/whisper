@@ -86,7 +86,7 @@ func DecryptFileKey(receiver: PrivateKey, sender: PublicKey, fileKey: [UInt8]) t
 func EncryptMessage(fileKey: [UInt8], message: String) throws -> [UInt8] {
 	let bytes = Data(message.utf8)
 	let symmetricKey = SymmetricKey(data: fileKey)
-	let sealedBox = try AES.GCM.seal(bytes, using: symmetricKey)
+	let sealedBox = try AES.GCM.seal(bytes, using: symmetricKey, nonce: AES.GCM.Nonce())
 	return [UInt8](sealedBox.combined!)
 }
 

@@ -7,12 +7,30 @@
 		<key>Sharing.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Whisper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>2B14447A286F523D00990936</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2B6C8CB1286E182800A1CB8F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2BEC9348286869AA00B0BCCF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

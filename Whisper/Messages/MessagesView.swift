@@ -83,14 +83,21 @@ struct MessagesView: View {
 	
 	var body: some View {
 		NavigationView {
-			List {
-				ForEach($messages) { $message in
-					NavigationLink {
-						ComposeMessageView(message: $message, userContacts: $contacts, messageContacts: contacts.filter{
-							message.receipients.contains($0.publicKey)
-						})
-					} label: {
-						MessageRow(message: $message)
+			Group {
+				if messages.isEmpty {
+					Text("没有消息")
+						.foregroundColor(.gray)
+				} else {
+					List {
+						ForEach($messages) { $message in
+							NavigationLink {
+								ComposeMessageView(message: $message, userContacts: $contacts, messageContacts: contacts.filter{
+									message.receipients.contains($0.publicKey)
+								})
+							} label: {
+								MessageRow(message: $message)
+							}
+						}
 					}
 				}
 			}

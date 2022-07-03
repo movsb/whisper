@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct MiniContactView: View {
-	@Binding var contact: Contact
+	var contact: Contact
 	var body: some View {
 		VStack {
-			Image(systemName: "person")
+			Image(systemName: contact.avatar)
 				.resizable()
 				.frame(width: 20, height: 20)
 			Text(contact.name)
@@ -68,7 +68,11 @@ struct ComposeMessageView: View {
 		
 		let body = message.title + "\0" + message.content
 		do {
-			let file = try NewFile(sender: gPrivateKey, recipients: [gPrivateKey.publicKey], message: body)
+			let file = try NewFile(
+				sender: gPrivateKey,
+				recipients: message.receipients.map{PublicKey.fromString(s: $0)!},
+				message: body
+			)
 			// TODO 删除临时文件。
 			let fileURL = try Data(file.bytes()).toTemporaryFileWithDateName()
 			let activityController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
@@ -124,7 +128,7 @@ struct ComposeMessageView: View {
 					ScrollView(.horizontal) {
 						HStack {
 							ForEach($messageContacts) { $contact in
-								MiniContactView(contact: $contact)
+								MiniContactView(contact: contact)
 							}
 						}
 					}

@@ -84,8 +84,8 @@ let p1p = p1.publicKey.String()
 let p2p = p2.publicKey.String()
 
 var gContacts: [Contact] = [
-	Contact(id: p1p, name: "iPad", publicKey: p1p),
-	Contact(id: p2p, name: "iPhone", publicKey: p2p),
+	//Contact(id: p1p, name: "iPad", publicKey: p1p),
+	//Contact(id: p2p, name: "iPhone", publicKey: p2p),
 ]
 
 struct ContactsView: View {

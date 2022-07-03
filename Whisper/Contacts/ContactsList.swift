@@ -15,12 +15,19 @@ struct ContactsList: View {
 	
 	var body: some View {
 		NavigationView {
-			List {
-				ForEach($contacts) { $contact in
-					NavigationLink {
-						ContactDetailsView(contact: $contact)
-					} label: {
-						ContactRow(contact: contact)
+			Group {
+				if contacts.isEmpty {
+					Text("没有联系人")
+						.foregroundColor(.gray)
+				} else {
+					List {
+						ForEach($contacts) { $contact in
+							NavigationLink {
+								ContactDetailsView(contact: $contact)
+							} label: {
+								ContactRow(contact: contact)
+							}
+						}
 					}
 				}
 			}

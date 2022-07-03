@@ -32,6 +32,11 @@ struct ContactWithSelectionView: View {
 	
 	var body: some View {
 		HStack {
+			Image(systemName: contact.avatar)
+				.resizable()
+				.frame(width: 20, height: 20)
+			Text(contact.name)
+			Spacer()
 			Button(action: {
 				selected.toggle()
 				onChange(selected)
@@ -40,7 +45,6 @@ struct ContactWithSelectionView: View {
 					.resizable()
 					.frame(width: 25, height: 25)
 			})
-			Text(contact.name)
 		}
 	}
 }
@@ -91,6 +95,7 @@ struct SelectContactsView: View {
 				}
 				Spacer()
 				Text("选择接收人")
+					.font(.headline)
 					.bold()
 				Spacer()
 				Button("完成") {
@@ -99,13 +104,21 @@ struct SelectContactsView: View {
 				}
 			}
 			.padding([.top, .leading, .trailing])
-			
-			List(distinctContacts) { contact in
-				ContactWithSelectionView(
-					contact: contact,
-					onChange: onChange(contact.publicKey),
-					selected: includes(contacts: selectedContacts, contact: contact)
-				)
+			VStack {
+				if distinctContacts.isEmpty {
+					Spacer()
+					Text("没有联系人")
+						.foregroundColor(.gray)
+					Spacer()
+				} else {
+					List(distinctContacts) { contact in
+						ContactWithSelectionView(
+							contact: contact,
+							onChange: onChange(contact.publicKey),
+							selected: includes(contacts: selectedContacts, contact: contact)
+						)
+					}
+				}
 			}
 		}
 		.onAppear() {
@@ -133,6 +146,6 @@ struct SelectContactsView_Previews: PreviewProvider {
 	@State static private var showPopover = false
 	
 	static var previews: some View {
-		SelectContactsView(showPopover: $showPopover, distinctContacts: contacts, selectedContacts: selctedContacts, setNewContacts: setNewContacts(contacts:))
+		SelectContactsView(showPopover: $showPopover, distinctContacts: [], selectedContacts: selctedContacts, setNewContacts: setNewContacts(contacts:))
 	}
 }
