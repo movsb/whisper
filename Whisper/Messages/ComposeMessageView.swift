@@ -71,21 +71,14 @@ struct ComposeMessageView: View {
 					Text("标题：").bold()
 					Spacer()
 				}
-				TextEditor(text: $message.title)
-					.lineLimit(1)
-					.frame(height: 35)
+				TextField("", text: $message.title)
+					.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
 					.overlay {
 						RoundedRectangle(cornerRadius: 4)
 							.stroke(lineWidth: 1)
+							.fill(.gray)
 					}
 					.padding(.bottom)
-				/// TextField 在这里会自动中文变英文，解决不了。
-				//				TextField("", text: $message.title)
-				//					.overlay {
-				//						RoundedRectangle(cornerRadius: 4)
-				//							.stroke(lineWidth: 0.5)
-				//					}
-				//					.padding(.bottom)
 				HStack {
 					Text("接收人：").bold()
 					Spacer()
@@ -121,12 +114,13 @@ struct ComposeMessageView: View {
 					Spacer()
 				}
 				TextEditor(text: $message.content)
-					.lineLimit(10)
 					.frame(height: 200)
 					.overlay {
 						RoundedRectangle(cornerRadius: 4)
 							.stroke(lineWidth: 1)
+							.fill(.gray)
 					}
+					.padding(.bottom)
 			}
 			.padding()
 			.navigationBarTitle("编辑消息")

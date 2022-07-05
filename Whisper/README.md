@@ -63,3 +63,8 @@ SwiftUI：
 * [How to let users delete rows from a list - a free SwiftUI by Example tutorial](https://www.hackingwithswift.com/quick-start/swiftui/how-to-let-users-delete-rows-from-a-list)
   * 实现滑动删除
 
+
+状态管理：
+
+* [SwiftUI: @State vs @StateObject vs @ObservedObject vs @EnvironmentObject | by Sam Wright | Level Up Coding](https://levelup.gitconnected.com/state-vs-stateobject-vs-observedobject-vs-environmentobject-in-swiftui-81e2913d63f9)
+  * 比较详细的说明了几种状态管理的区别，特别是后面的总结比较好。
