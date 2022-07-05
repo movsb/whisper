@@ -33,13 +33,28 @@ struct NewContactView: View {
 			showingAlert = true
 			return
 		}
-		pubKeyStr = NewPrivateKey().publicKey.String()
+		// pubKeyStr = NewPrivateKey().publicKey.String()
 		guard let pubKey = PublicKey.fromString(s: pubKeyStr) else {
 			alertMessage = "无效的公钥"
 			showingAlert = true
 			return
 		}
-		contact = Contact(name: name, publicKey: pubKey.String(), avatar: iconSelected)
+		
+		// 重复判断
+		if let _ = contacts.first(where: {$0.name == trimmedName}) {
+			alertMessage = "已经存在同名的联系人"
+			showingAlert = true
+			nameFocused = true
+			return
+		}
+		if let c = contacts.first(where: {$0.publicKey == pubKeyStr}) {
+			alertMessage = "已经存在相同公钥的联系人（名字：\(c.name)）"
+			showingAlert = true
+			pubKeyFocused = true
+			return
+		}
+		
+		contact = Contact(name: trimmedName, publicKey: pubKey.String(), avatar: iconSelected)
 		contacts.append(contact)
 		showCreate = false
 	}
