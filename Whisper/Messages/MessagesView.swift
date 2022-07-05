@@ -46,6 +46,7 @@ struct MessagesView: View {
 								MessageRow(message: $message)
 							}
 						}
+						.onDelete(perform: delete(at:))
 					}
 				}
 			}
@@ -61,6 +62,10 @@ struct MessagesView: View {
 			}
 		}
     }
+	
+	private func delete(at offsets: IndexSet) {
+		globalStates.messages.remove(atOffsets: offsets)
+	}
 }
 
 struct MessagesView_Previews: PreviewProvider {

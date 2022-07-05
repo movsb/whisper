@@ -28,6 +28,7 @@ struct ContactsList: View {
 								ContactRow(contact: contact)
 							}
 						}
+						.onDelete(perform: delete)
 					}
 				}
 			}
@@ -44,6 +45,10 @@ struct ContactsList: View {
 				}
 			}
 		}
+	}
+	
+	private func delete(at offsets: IndexSet) {
+		globalStates.contacts.remove(atOffsets: offsets)
 	}
 }
 

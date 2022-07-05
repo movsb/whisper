@@ -59,3 +59,7 @@ Share Extension：
 SwiftUI：
 
 * [How could I initialize the @State variable in the init function in SwiftUI? - Stack Overflow](https://stackoverflow.com/a/60028709/3628322)
+  * 在 init 中初始化 @State 变量
+* [How to let users delete rows from a list - a free SwiftUI by Example tutorial](https://www.hackingwithswift.com/quick-start/swiftui/how-to-let-users-delete-rows-from-a-list)
+  * 实现滑动删除
+
