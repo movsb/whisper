@@ -54,6 +54,8 @@ extension Data {
 }
 
 struct ComposeMessageView: View {
+	@EnvironmentObject var globalStates: GlobalStates
+	
 	@Binding var message: Message
 	
 	@State private var showingAlert = false
@@ -69,7 +71,7 @@ struct ComposeMessageView: View {
 		let body = message.title + "\0" + message.content
 		do {
 			let file = try NewFile(
-				sender: gPrivateKey,
+				sender: globalStates.privateKey!,
 				recipients: message.receipients.map{PublicKey.fromString(s: $0)!},
 				message: body
 			)
@@ -82,10 +84,7 @@ struct ComposeMessageView: View {
 		}
 	}
 	
-	@Binding var userContacts: [Contact]
 	@State var messageContacts: [Contact]
-	
-	@State private var contactsToShow: [Contact] = []
 	@State private var showSelectContacts = false
 	
 	func setNewContacts(contacts: [Contact]) {
@@ -133,9 +132,6 @@ struct ComposeMessageView: View {
 						}
 					}
 					Button(action: {
-						contactsToShow = userContacts + messageContacts.filter { elem in
-							!userContacts.contains { $0.id == elem.id }
-						}
 						UIApplication.shared.endEditing()
 						showSelectContacts = true
 					}, label: {
@@ -146,8 +142,8 @@ struct ComposeMessageView: View {
 					.popover(isPresented: $showSelectContacts) {
 						SelectContactsView(
 							showPopover: $showSelectContacts,
-							distinctContacts: contactsToShow,
-							selectedContacts: contactsToShow.filter{message.receipients.contains($0.publicKey)},
+							distinctContacts: globalStates.contacts,
+							selectedContacts: globalStates.contacts.filter{message.receipients.contains($0.publicKey)},
 							setNewContacts: setNewContacts(contacts:)
 						)
 					}
@@ -187,14 +183,14 @@ struct ComposeMessageView: View {
 }
 
 struct ComposeMessageView_Previews: PreviewProvider {
-	@State static var messageX = Message(title: "Title1", receipients: ["p1"], content: "Content1")
-	@State static var userContacts = [Contact(id: "1", name: "1", publicKey: "1")]
+	@State static var message = Message(title: "Title1", receipients: ["p1"], content: "Content1")
+	@State static var contacts = [Contact(name: "1", publicKey: "1")]
+	@StateObject var globalStates = GlobalStates()
     static var previews: some View {
 		ComposeMessageView(
-			message: $messageX,
-			userContacts: $userContacts,
-			messageContacts: userContacts.filter{
-				messageX.receipients.contains($0.publicKey)
+			message: $message,
+			messageContacts: contacts.filter{
+				message.receipients.contains($0.publicKey)
 			}
 		)
     }

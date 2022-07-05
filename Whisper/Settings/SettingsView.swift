@@ -9,8 +9,7 @@ import SwiftUI
 import CryptoKit
 
 struct SettingsView: View {
-	@Binding var loggedIn: Bool
-	@Binding var privateKey: PrivateKey
+	@EnvironmentObject var globalStates: GlobalStates
 	@State private var alertSignout = false
 	
 	var body: some View {
@@ -27,11 +26,11 @@ struct SettingsView: View {
 				SwiftUI.Section {
 					HStack {
 						Text("我的公钥")
-						Text(privateKey.publicKey.String())
+						Text(globalStates.privateKey!.publicKey.String())
 							// https://stackoverflow.com/a/66903216/3628322
 							.contextMenu(ContextMenu(menuItems: {
 								Button("复制", action: {
-									let s = privateKey.publicKey.String()
+									let s = globalStates.privateKey!.publicKey.String()
 									UIPasteboard.general.string = s
 								})
 							}))
@@ -39,10 +38,10 @@ struct SettingsView: View {
 					}
 					HStack {
 						Text("我的私钥")
-						Text(privateKey.String())
+						Text(globalStates.privateKey!.String())
 							.contextMenu(ContextMenu(menuItems: {
 								Button("复制", action: {
-									let s = privateKey.String()
+									let s = globalStates.privateKey!.String()
 									UIPasteboard.general.string = s
 								})
 							}))
@@ -64,7 +63,7 @@ struct SettingsView: View {
 						title: Text("确认退出登录？"),
 						message: Text("如果你忘记了私钥，你将不能登录此帐号。请在确认退出前妥善保管你的私钥。"),
 						primaryButton: .destructive(Text("退出登录")) {
-							loggedIn = false
+							signOut()
 						},
 						secondaryButton: .cancel()
 					)
@@ -75,12 +74,20 @@ struct SettingsView: View {
 			.navigationBarTitleDisplayMode(.inline)
 		}
 	}
+	
+	private func signOut() {
+		try! globalStates.saveMessages()
+		try! globalStates.saveContacts()
+		globalStates.removeLastUser()
+		globalStates.loggedin = false
+		// 这里不能清 privateKey，会崩溃。
+	}
 }
 
 struct SettingsView_Previews: PreviewProvider {
-	@State static private var privateKey = NewPrivateKey()
-	@State static private var loggedIn = false
-    static var previews: some View {
-		SettingsView(loggedIn: $loggedIn, privateKey: $privateKey)
-    }
+	@StateObject static private var globalStates = GlobalStates()
+	static var previews: some View {
+		SettingsView()
+			.environmentObject(globalStates)
+	}
 }

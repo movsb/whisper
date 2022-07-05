@@ -1,5 +1,5 @@
 //
-//  X.swift
+//  ShareViewController.swift
 //  Sharing
 //
 //  Created by Yang Tao on 2022/07/03.
@@ -11,6 +11,9 @@ import UIKit
 enum ShareError: Error {
 	case unspecified
 }
+
+private let appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.twofei.whisper.share")!
+private let appGroupUserDefaults = UserDefaults.init(suiteName: "group.com.twofei.whisper.share")!
 
 
 @objc (ShareViewController)
@@ -52,11 +55,19 @@ class ShareViewController: UIViewController {
 			return showErrorAndExit(message: message)
 		}
 	}
+	
+	private func initialize() {
+		sharedData = container.rootView.sharedData
+	}
 		
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		sharedData = container.rootView.sharedData
+		initialize()
+		
+		guard let currentUserPublicKey = appGroupUserDefaults.string(forKey: "currentUserPublicKey") else {
+			return showErrorAndExit(message: "请先创建新用户或登录已有用户后再进行此操作。")
+		}
 		
 		// 为什么这里总是 1 个？
 		guard let item = extensionContext?.inputItems.first as? NSExtensionItem else {
@@ -96,6 +107,7 @@ class ShareViewController: UIViewController {
 								// TODO 清理共享目录。
 								return self.showErrorAndExitSync(message: "加载数据时出错：\(err.localizedDescription)")
 							}
+							self.loadItemCompletionHandler(data: data)
 						})
 						return
 					default:

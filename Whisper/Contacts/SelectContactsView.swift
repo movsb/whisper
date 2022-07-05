@@ -7,26 +7,15 @@
 
 import SwiftUI
 
-//class ContactWithSelection {
-//	var contact: Contact
-//	var selected: Bool
-//
-//	init(contact: Contact, selected: Bool) {
-//		self.contact = contact
-//		self.selected = selected
-//	}
-//}
-
 struct ContactWithSelectionView: View {
 	let contact: Contact
 	let onChange: (_ value: Bool) -> Void
-	
-	@State var selected: Bool
+	@State var selected: Bool = false
 	
 	init(contact: Contact, onChange: @escaping (_: Bool) -> Void, selected: Bool) {
 		self.contact = contact
 		self.onChange = onChange
-		self.selected = selected
+		self._selected = .init(initialValue: selected)
 		print("初始化 ContactWithSelectionView", contact, selected)
 	}
 	
@@ -50,12 +39,12 @@ struct ContactWithSelectionView: View {
 }
 
 struct ContactWithSelectionView_Previews: PreviewProvider {
-	@State static private var contact = Contact(id: "adf", name: "Name", publicKey: "pk")
+	@State static private var contact = Contact(name: "Name", publicKey: "pk")
 	static private func onChange(value: Bool) {
 		print(value)
 	}
 	static var previews: some View {
-		ContactWithSelectionView(contact: contact, onChange: onChange(value:), selected: false)
+		ContactWithSelectionView(contact: contact, onChange: onChange(value:), selected: true)
 	}
 }
 
@@ -127,18 +116,19 @@ struct SelectContactsView: View {
 }
 
 func includes(contacts: [Contact], contact: Contact) -> Bool {
-	print("判断存在性", contacts, contact)
-	return contacts.contains(where: {$0.publicKey == contact.publicKey})
+	let exist = contacts.contains(where: {$0.publicKey == contact.publicKey})
+	print("判断存在性", contacts, contact, exist)
+	return exist
 }
 
 struct SelectContactsView_Previews: PreviewProvider {
 	@State static private var contacts = [
-		Contact(id: "1", name: "Name1", publicKey: "pk1"),
-		Contact(id: "2", name: "Name2", publicKey: "pk2"),
-		Contact(id: "3", name: "Name3", publicKey: "pk3"),
+		Contact(name: "Name1", publicKey: "pk1"),
+		Contact(name: "Name2", publicKey: "pk2"),
+		Contact(name: "Name3", publicKey: "pk3"),
 	]
 	static private var selctedContacts = [
-		Contact(id: "2", name: "Name2", publicKey: "pk2"),
+		Contact(name: "Name2", publicKey: "pk2"),
 	]
 	static private func setNewContacts(contacts: [Contact]) {
 		print(contacts)

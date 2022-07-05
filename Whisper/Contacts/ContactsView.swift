@@ -9,17 +9,18 @@ import SwiftUI
 import CryptoKit
 
 struct Contact : Identifiable, Codable, Hashable {
-	var id: String
+	var id = UUID()
 	
 	var name: String
 	var publicKey: String
 	var avatar: String = "person"
 	
-	init(id: String, name: String, publicKey: String) {
-		self.init(id: id, name: name, publicKey: publicKey, avatar: "person")
+	init(name: String, publicKey: String) {
+		self.init(name: name, publicKey: publicKey, avatar: "person")
 	}
-	init(id: String, name: String, publicKey: String, avatar: String) {
-		self.id = id
+	
+	init(name: String, publicKey: String, avatar: String) {
+		self.id = UUID()
 		self.name = name
 		self.publicKey = publicKey
 		self.avatar = avatar
@@ -84,20 +85,21 @@ let p1p = p1.publicKey.String()
 let p2p = p2.publicKey.String()
 
 var gContacts: [Contact] = [
-	//Contact(id: p1p, name: "iPad", publicKey: p1p),
-	//Contact(id: p2p, name: "iPhone", publicKey: p2p),
+	Contact(name: "iPad", publicKey: p1p),
+	Contact(name: "iPhone", publicKey: p2p),
 ]
 
 struct ContactsView: View {
-	@Binding var contacts: [Contact]
+	@EnvironmentObject var globalStates: GlobalStates
     var body: some View {
-        ContactsList(contacts: $contacts)
+        ContactsList()
     }
 }
 
 struct ContactsView_Previews: PreviewProvider {
-	@State static private var contacts = gContacts
+	@State static private var globalStates = GlobalStates()
     static var previews: some View {
-        ContactsView(contacts: $contacts)
+        ContactsView()
+			.environmentObject(globalStates)
     }
 }

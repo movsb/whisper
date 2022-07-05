@@ -10,18 +10,18 @@ import CryptoKit
 
 struct ContactsList: View {
 	@State var showCreate: Bool = false
-	@State var newContact: Contact = Contact(id: UUID().uuidString, name: "", publicKey: "")
-	@Binding var contacts: [Contact]
+	@State var newContact: Contact = Contact(name: "", publicKey: "")
+	@EnvironmentObject var globalStates: GlobalStates
 	
 	var body: some View {
 		NavigationView {
 			Group {
-				if contacts.isEmpty {
+				if globalStates.contacts.isEmpty {
 					Text("没有联系人")
 						.foregroundColor(.gray)
 				} else {
 					List {
-						ForEach($contacts) { $contact in
+						ForEach($globalStates.contacts) { $contact in
 							NavigationLink {
 								ContactDetailsView(contact: $contact)
 							} label: {
@@ -40,7 +40,7 @@ struct ContactsList: View {
 					Image(systemName: "plus")
 				})
 				.popover(isPresented: $showCreate) {
-					NewContactView(contact: $newContact, contacts: $contacts, showCreate: $showCreate)
+					NewContactView(contact: $newContact, contacts: $globalStates.contacts, showCreate: $showCreate)
 				}
 			}
 		}
@@ -48,8 +48,9 @@ struct ContactsList: View {
 }
 
 struct ContactsList_Previews: PreviewProvider {
-	@State static private var contacts = gContacts
+	@State static private var globalStates = GlobalStates()
 	static var previews: some View {
-		ContactsList(contacts: $contacts)
+		ContactsList()
+			.environmentObject(globalStates)
 	}
 }

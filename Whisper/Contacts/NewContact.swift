@@ -39,7 +39,7 @@ struct NewContactView: View {
 			showingAlert = true
 			return
 		}
-		contact = Contact(id: pubKey.String(), name: name, publicKey: pubKey.String(), avatar: iconSelected)
+		contact = Contact(name: name, publicKey: pubKey.String(), avatar: iconSelected)
 		contacts.append(contact)
 		showCreate = false
 	}

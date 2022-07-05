@@ -48,3 +48,14 @@ Share Extension：
 
 * [What Is The Difference Between Try, Try?, And Try!](https://cocoacasts.com/what-is-the-difference-between-try-try-and-try)
   * 很清晰的文档讲解了几种 `try` 的区别。
+
+## 07.04
+
+* [How to use @EnvironmentObject to share data between views - a free SwiftUI by Example tutorial](https://www.hackingwithswift.com/quick-start/swiftui/how-to-use-environmentobject-to-share-data-between-views)
+  * 环境变量的使用，可以大量减少参数在 Views 之间的传递。
+
+## 07.05
+
+SwiftUI：
+
+* [How could I initialize the @State variable in the init function in SwiftUI? - Stack Overflow](https://stackoverflow.com/a/60028709/3628322)
