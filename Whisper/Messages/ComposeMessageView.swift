@@ -150,8 +150,8 @@ struct ComposeMessageView: View {
 }
 
 struct ComposeMessageView_Previews: PreviewProvider {
-	@State static var message = Message(title: "Title1", receipients: ["p1"], content: "Content1")
-	@State static var contacts = [Contact(name: "1", publicKey: "1")]
+	@State static var message = Message.example()
+	@State static var contacts = [Contact.example()]
 	@StateObject var globalStates = GlobalStates()
     static var previews: some View {
 		ComposeMessageView(

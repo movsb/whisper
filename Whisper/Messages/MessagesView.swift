@@ -20,6 +20,10 @@ class Message: Identifiable, Codable {
 		self.receipients = receipients
 		self.content = content
 	}
+	
+	static func example() -> Message {
+		return Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "content")
+	}
 }
 
 struct MessageRow: View {

@@ -123,8 +123,8 @@ struct NewContactView: View {
 
 struct NewContactView_Previews: PreviewProvider {
 	@State static var showCreate  = false
-	@State static var contact = gContacts[0]
-	@State static var contacts = gContacts
+	@State static var contact = Contact.example()
+	@State static var contacts = [Contact.example()]
     static var previews: some View {
 		NewContactView(contact: $contact, contacts: $contacts, showCreate: $showCreate)
     }

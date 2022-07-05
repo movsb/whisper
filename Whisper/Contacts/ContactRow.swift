@@ -19,6 +19,6 @@ struct ContactRow: View {
 
 struct ContactRow_Previews: PreviewProvider {
     static var previews: some View {
-        ContactRow(contact: gContacts[0])
+		ContactRow(contact: Contact.example())
     }
 }

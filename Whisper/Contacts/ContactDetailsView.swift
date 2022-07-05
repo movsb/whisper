@@ -47,7 +47,7 @@ struct ContactDetailsView: View {
 }
 
 struct ContactView_Previews: PreviewProvider {
-	@State static private var contact = gContacts[0]
+	@State static private var contact = Contact.example()
 	static var previews: some View {
 		ContactDetailsView(contact: $contact)
 	}
