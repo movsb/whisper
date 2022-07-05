@@ -32,6 +32,7 @@
 		2BEC9361286877EB00B0BCCF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC9360286877EB00B0BCCF /* SettingsView.swift */; };
 		2BEC9363286878C300B0BCCF /* ContactDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */; };
 		2BEC936728687C0700B0BCCF /* ContactRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC936628687C0700B0BCCF /* ContactRow.swift */; };
+		2BF348B128749B5C002ECE39 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF348B028749B5C002ECE39 /* Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 		2BEC9360286877EB00B0BCCF /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2BEC9362286878C300B0BCCF /* ContactDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailsView.swift; sourceTree = "<group>"; };
 		2BEC936628687C0700B0BCCF /* ContactRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRow.swift; sourceTree = "<group>"; };
+		2BF348B028749B5C002ECE39 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,6 +208,7 @@
 			children = (
 				2BD62F3D287359FC001DFC7D /* AlertTextField.swift */,
 				2BD62F3F28746C59001DFC7D /* Spinning.swift */,
+				2BF348B028749B5C002ECE39 /* Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -426,6 +429,7 @@
 				2B6C8CA2286DEECF00A1CB8F /* File.swift in Sources */,
 				2B14448E286F90D300990936 /* SFSymbolsView.swift in Sources */,
 				2B088512286B460F00997C1D /* ComposeMessageView.swift in Sources */,
+				2BF348B128749B5C002ECE39 /* Extension.swift in Sources */,
 				2BEC936728687C0700B0BCCF /* ContactRow.swift in Sources */,
 				2BD62F4028746C59001DFC7D /* Spinning.swift in Sources */,
 				2B394CF8286B802D007EBE92 /* SelectContactsView.swift in Sources */,

@@ -31,12 +31,14 @@ struct NewContactView: View {
 		if trimmedName == "" {
 			alertMessage = "名字不应为空"
 			showingAlert = true
+			nameFocused = true
 			return
 		}
 		// pubKeyStr = NewPrivateKey().publicKey.String()
 		guard let pubKey = PublicKey.fromString(s: pubKeyStr) else {
 			alertMessage = "无效的公钥"
 			showingAlert = true
+			pubKeyFocused = true
 			return
 		}
 		

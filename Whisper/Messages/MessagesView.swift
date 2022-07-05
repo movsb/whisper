@@ -7,12 +7,19 @@
 
 import SwiftUI
 
-struct Message: Identifiable, Codable {
+class Message: Identifiable, Codable {
 	var id = UUID()
 	
 	var title: String
 	var receipients: [String]
 	var content: String
+	
+	init(id: UUID = UUID(), title: String, receipients: [String], content: String) {
+		self.id = id
+		self.title = title
+		self.receipients = receipients
+		self.content = content
+	}
 }
 
 struct MessageRow: View {

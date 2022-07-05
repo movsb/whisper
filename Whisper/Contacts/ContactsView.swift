@@ -8,19 +8,14 @@
 import SwiftUI
 import CryptoKit
 
-struct Contact : Identifiable, Codable, Hashable {
+class Contact : Identifiable, Codable {
 	var id = UUID()
-	
 	var name: String
 	var publicKey: String
-	var avatar: String = "person"
+	var avatar: String
 	
-	init(name: String, publicKey: String) {
-		self.init(name: name, publicKey: publicKey, avatar: "person")
-	}
-	
-	init(name: String, publicKey: String, avatar: String) {
-		self.id = UUID()
+	init(id: UUID = UUID(), name: String, publicKey: String, avatar: String = "person") {
+		self.id = id
 		self.name = name
 		self.publicKey = publicKey
 		self.avatar = avatar
