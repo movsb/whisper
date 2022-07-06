@@ -99,15 +99,60 @@ class GlobalStates: ObservableObject {
 	}
 	
 	func loadMessages() throws {
-		messages = try loadUserJson(name: "messages.json", demo: [Message(title: "", receipients: [""], content: "")])
+		do {
+			messages = try loadUserJson(name: "messages.json", demo: [Message.example()])
+		} catch CocoaError.fileNoSuchFile {
+			messages = []
+		}
+		if let (_, found) = try? loadInbox() {
+			messages.insert(contentsOf: found, at: 0)
+		}
 	}
 	func loadContacts() throws {
-		contacts = try loadUserJson(name: "contacts.json", demo: [Contact(name: "", publicKey: "")])
+		do {
+			contacts = try loadUserJson(name: "contacts.json", demo: [Contact.example()])
+		} catch CocoaError.fileNoSuchFile {
+			contacts = []
+		}
 	}
 	func saveContacts() throws {
 		try saveUserJson(name: "contacts.json", data: contacts)
 	}
 	func saveMessages() throws {
 		try saveUserJson(name: "messages.json", data: messages)
+	}
+	
+	// 加载共享来的消息数据
+	func loadInbox() throws -> ([String], [Message]) {
+		let usersDirURL = appGroupURL.appendingPathComponent("users")
+		let userDirURL = usersDirURL.appendingPathComponent(privateKey!.publicKey.String()).appendingPathComponent("whispers")
+		if !FileManager.default.fileExists(atPath: userDirURL.path) {
+			return ([],[])
+		}
+		guard let entries = try? FileManager.default.contentsOfDirectory(atPath: userDirURL.path) else {
+			return ([],[])
+		}
+		
+		var failed: [String] = []
+		var messages: [Message] = []
+		
+		try entries.forEach { name in
+			let pathURL = userDirURL.appendingPathComponent(name)
+			if !FileManager.default.isReadableFile(atPath: pathURL.path) {
+				return
+			}
+			let data = try Data(contentsOf: pathURL)
+			do {
+				let file = try File.decode(data: data, recipient: privateKey!)
+				let message = Message(title: file.title, receipients: [privateKey!.publicKey.String()], content: file.content)
+				message.read = false
+				messages.append(message)
+				try? FileManager.default.removeItem(at: pathURL)
+			} catch {
+				failed.append("文件 \(name) 无法解密：\(error.localizedDescription)")
+			}
+		}
+		
+		return (failed, messages)
 	}
 }

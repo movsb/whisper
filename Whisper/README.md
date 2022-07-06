@@ -81,3 +81,8 @@ SwiftUI
 * [How to throw errors using strings - free Swift 5.4 example code and tips](https://www.hackingwithswift.com/example-code/language/how-to-throw-errors-using-strings)
   * 抛出字符串型错误。
 
+
+定时器的使用：
+
+* [Triggering events repeatedly using a timer - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/triggering-events-repeatedly-using-a-timer)
+

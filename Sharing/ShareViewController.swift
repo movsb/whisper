@@ -159,7 +159,7 @@ class ShareViewController: UIViewController {
 		// 只复制到当前用户目录，以防止复制后切换用户
 		let usersDirURL = shareDirectory.appendingPathComponent("users")
 		let userDirURL = usersDirURL.appendingPathComponent(currentUserPublicKeyString)
-		let filesDir = userDirURL.appendingPathComponent("files")
+		let filesDir = userDirURL.appendingPathComponent("whispers")
 		do {
 			try FileManager.default.createDirectory(at: filesDir, withIntermediateDirectories: true)
 		} catch {
@@ -192,7 +192,12 @@ class ShareViewController: UIViewController {
 		}
 		
 		print("已复制到路径：\(dstURL)")
-		return showErrorAndExitAsync(message: "文件已复制")
+		DispatchQueue.main.async {
+			self.setView(full: false)
+			self.sharedData.fn = self.completeRequest
+			self.sharedData.text = "请打开 Whisper 查看新消息"
+			self.sharedData.alertShowing2 = true
+		}
 	}
 }
 
@@ -209,8 +214,10 @@ extension FileManager {
 
 class SharedData: ObservableObject {
 	@Published var text: String = ""
+	@Published var alertTitle = ""
 	@Published var alertMessage = ""
 	@Published var alertShowing = false
+	@Published var alertShowing2 = false
 	@Published var fn: (() -> Void)?
 	
 	@Published var alertOverwrite = false
@@ -230,7 +237,16 @@ struct SwiftUIView: View {
 		VStack {
 			TextField("",text: $sharedData.text)
 				.alert(isPresented: $sharedData.alertShowing, content: {
-					Alert(title: Text("错误"), message: Text(sharedData.alertMessage), dismissButton: .cancel {
+					Alert(title: Text(sharedData.text != "" ? sharedData.text : "错误"), message: Text(sharedData.alertMessage), dismissButton: .cancel {
+						if let fn = sharedData.fn {
+							fn()
+						}
+						sharedData.text = ""
+					})
+				})
+			Text("hidden")
+				.alert(isPresented: $sharedData.alertShowing2, content: {
+					Alert(title: Text(sharedData.text), message: Text(sharedData.alertMessage), dismissButton: .default(Text("OK")) {
 						if let fn = sharedData.fn {
 							fn()
 						}

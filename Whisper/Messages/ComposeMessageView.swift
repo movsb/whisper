@@ -34,20 +34,25 @@ struct ComposeMessageView: View {
 			showingAlert = true
 			return
 		}
+		if message.receipients.count > 5 {
+			alertMessage = "不能选择超过 5 个联系人"
+			showingAlert = true
+			return
+		}
 		
-		let body = message.title + "\0" + message.content
 		do {
-			let file = try NewFile(
-				sender: globalStates.privateKey!,
-				recipients: message.receipients.map{PublicKey.fromString(s: $0)!},
-				message: body
-			)
-			// TODO 删除临时文件。
-			let fileURL = try Data(file.bytes()).toTemporaryFileWithDateName()
+			let recipients = globalStates.contacts.filter { contact in message.receipients.contains(contact.publicKey) }.map{PublicKey.fromString(s: $0.publicKey)!}
+			let file = File(fileHeader: kFileHeader, recipients: recipients, title: message.title, content: message.content)
+			let encoded = try file.encode(sender: globalStates.privateKey!, fileKey: try! NewFileKey())
+			let fileURL = try encoded.toTemporaryFileWithDateName()
 			let activityController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
 			UIApplication.shared.windows.first?.rootViewController!.present(activityController, animated: true, completion: nil)
+			// TODO 删除分享文件
+			// try? FileManager.default.removeItem(at: fileURL)
 		} catch {
-			fatalError(error.localizedDescription)
+			alertMessage = error.localizedDescription
+			showingAlert = true
+			return
 		}
 	}
 	
@@ -139,6 +144,10 @@ struct ComposeMessageView: View {
 		}
 		.onTapGesture {
 			UIApplication.shared.endEditing()
+		}
+		.onAppear {
+			message.read = true
+			messageContacts = globalStates.contacts.filter{message.receipients.contains($0.publicKey)}
 		}
 	}
 }

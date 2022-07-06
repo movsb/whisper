@@ -13,6 +13,7 @@ class Message: Identifiable, Codable {
 	var title: String
 	var receipients: [String]
 	var content: String
+	var read: Bool = true
 	
 	init(id: UUID = UUID(), title: String, receipients: [String], content: String) {
 		self.id = id
@@ -24,21 +25,32 @@ class Message: Identifiable, Codable {
 	static func example() -> Message {
 		return Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "content")
 	}
+	static func exampleUnread() -> Message {
+		let m = Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "content")
+		m.read = false
+		return m
+	}
 }
 
 struct MessageRow: View {
 	@Binding var message: Message
 	var body: some View {
 		HStack {
-			Label(message.title, systemImage: "message.fill")
+			Image(systemName: message.read ? "" : "circle.fill")
+				.resizable()
+				.frame(width: 6, height: 6)
+				.foregroundColor(.accentColor)
+			Text(message.title)
 			Spacer()
 		}
 	}
 }
 
-
 struct MessagesView: View {
 	@EnvironmentObject var globalStates: GlobalStates
+	
+	// 自动刷新收件箱的消息。
+	let refreshInboxTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 	
 	var body: some View {
 		NavigationView {
@@ -72,6 +84,13 @@ struct MessagesView: View {
 				})
 			}
 		}
+		.onReceive(refreshInboxTimer) { _ in
+			if let (failed, found) = try? globalStates.loadInbox() {
+				globalStates.messages.insert(contentsOf: found, at: 0)
+				print("刷新消息，找到 \(found.count) 条消息")
+				print("错误内容：\(failed)")
+			}
+		}
     }
 	
 	private func delete(at offsets: IndexSet) {
@@ -84,5 +103,9 @@ struct MessagesView_Previews: PreviewProvider {
     static var previews: some View {
         MessagesView()
 			.environmentObject(globalStates)
+			.onAppear {
+				globalStates.messages.append(Message.example())
+				globalStates.messages.append(Message.exampleUnread())
+			}
     }
 }

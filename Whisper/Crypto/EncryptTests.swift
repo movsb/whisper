@@ -50,8 +50,7 @@ final class EncryptTests: XCTestCase {
 		let recipients = [pri.publicKey]
 		let file = File(fileHeader: kFileHeader, recipients: recipients, title: "标题", content: "内容")
 		let encrypted = try file.encode(sender: pri, fileKey: fk)
-		let newPri = NewPrivateKey()
-		let decrypted = try File.decode(data: encrypted, recipient: newPri)
+		let decrypted = try File.decode(data: encrypted, recipient: pri)
 		print(decrypted)
 	}
 }
