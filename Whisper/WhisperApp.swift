@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 @main
 struct WhisperApp: App {
 	@StateObject var globalStates = GlobalStates()

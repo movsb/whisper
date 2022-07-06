@@ -168,7 +168,10 @@ struct File {
 		let combined = try DecryptMessage(encrypted: [UInt8](encryptedMessage), fileKey: fileKey!)
 		let parts = combined.split(separator: "\0")
 		let title = String(parts[0])
-		let content = String(parts[1])
+		var content = ""
+		if parts.count == 2 {
+			content = String(parts[1])
+		}
 		
 		return File(fileHeader: kFileHeader, recipients: [publicKey], title: title, content: content)
 	}

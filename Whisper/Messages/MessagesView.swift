@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+class FailedMessage: Identifiable {
+	var id = UUID()
+	
+	var name: String
+	var reason: String
+	
+	init(name: String, reason: String) {
+		self.name = name
+		self.reason = reason
+	}
+}
+
 class Message: Identifiable, Codable {
 	var id = UUID()
 	
@@ -46,6 +58,22 @@ struct MessageRow: View {
 	}
 }
 
+struct FailedMessageRow: View {
+	@Binding var failed: FailedMessage
+	var body: some View {
+		HStack {
+			Image(systemName: "circle.fill")
+				.resizable()
+				.frame(width: 6, height: 6)
+				.foregroundColor(.red)
+			VStack(alignment: .leading) {
+				Text(failed.name).bold()
+				Text(failed.reason).font(.footnote).foregroundColor(.gray)
+			}
+		}
+	}
+}
+
 struct MessagesView: View {
 	@EnvironmentObject var globalStates: GlobalStates
 	
@@ -55,11 +83,15 @@ struct MessagesView: View {
 	var body: some View {
 		NavigationView {
 			Group {
-				if globalStates.messages.isEmpty {
+				if globalStates.messages.isEmpty && globalStates.failedMessages.isEmpty {
 					Text("没有消息")
 						.foregroundColor(.gray)
 				} else {
 					List {
+						ForEach($globalStates.failedMessages) { $message in
+							FailedMessageRow(failed: $message)
+						}
+						.onDelete(perform: deleteFailed(at:))
 						ForEach($globalStates.messages) { $message in
 							NavigationLink {
 								ComposeMessageView(message: $message, messageContacts: globalStates.contacts.filter{
@@ -87,6 +119,7 @@ struct MessagesView: View {
 		.onReceive(refreshInboxTimer) { _ in
 			if let (failed, found) = try? globalStates.loadInbox() {
 				globalStates.messages.insert(contentsOf: found, at: 0)
+				globalStates.updateFailedMessages(failed: failed)
 				print("刷新消息，找到 \(found.count) 条消息")
 				print("错误内容：\(failed)")
 			}
@@ -95,6 +128,13 @@ struct MessagesView: View {
 	
 	private func delete(at offsets: IndexSet) {
 		globalStates.messages.remove(atOffsets: offsets)
+	}
+	
+	private func deleteFailed(at offsets: IndexSet) {
+		offsets.forEach {
+			globalStates.deleteFailedMessage(name: globalStates.failedMessages[$0].name)
+		}
+		globalStates.failedMessages.remove(atOffsets: offsets)
 	}
 }
 
@@ -106,6 +146,8 @@ struct MessagesView_Previews: PreviewProvider {
 			.onAppear {
 				globalStates.messages.append(Message.example())
 				globalStates.messages.append(Message.exampleUnread())
+				globalStates.failedMessages.append(FailedMessage(name: "name1", reason: "失败"))
+				globalStates.failedMessages.append(FailedMessage(name: "name2", reason: "失败"))
 			}
     }
 }

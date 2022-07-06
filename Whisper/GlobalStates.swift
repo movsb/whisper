@@ -14,6 +14,7 @@ class GlobalStates: ObservableObject {
 	@Published var loggedin = false
 	@Published var messages: [Message] = []
 	@Published var contacts: [Contact] = []
+	@Published var failedMessages: [FailedMessage] = []
 	
 	var privateKey: PrivateKey?
 	
@@ -104,8 +105,9 @@ class GlobalStates: ObservableObject {
 		} catch CocoaError.fileNoSuchFile {
 			messages = []
 		}
-		if let (_, found) = try? loadInbox() {
+		if let (failed, found) = try? loadInbox() {
 			messages.insert(contentsOf: found, at: 0)
+			updateFailedMessages(failed: failed)
 		}
 	}
 	func loadContacts() throws {
@@ -123,7 +125,7 @@ class GlobalStates: ObservableObject {
 	}
 	
 	// 加载共享来的消息数据
-	func loadInbox() throws -> ([String], [Message]) {
+	func loadInbox() throws -> ([FailedMessage], [Message]) {
 		let usersDirURL = appGroupURL.appendingPathComponent("users")
 		let userDirURL = usersDirURL.appendingPathComponent(privateKey!.publicKey.String()).appendingPathComponent("whispers")
 		if !FileManager.default.fileExists(atPath: userDirURL.path) {
@@ -133,7 +135,7 @@ class GlobalStates: ObservableObject {
 			return ([],[])
 		}
 		
-		var failed: [String] = []
+		var failed: [FailedMessage] = []
 		var messages: [Message] = []
 		
 		try entries.forEach { name in
@@ -149,10 +151,29 @@ class GlobalStates: ObservableObject {
 				messages.append(message)
 				try? FileManager.default.removeItem(at: pathURL)
 			} catch {
-				failed.append("文件 \(name) 无法解密：\(error.localizedDescription)")
+				failed.append(FailedMessage(name: pathURL.lastPathComponent, reason: error.localizedDescription))
 			}
 		}
 		
 		return (failed, messages)
+	}
+	
+	func updateFailedMessages(failed: [FailedMessage]) {
+		failed.forEach { f in
+			if !failedMessages.contains{ $0.name == f.name } {
+				failedMessages.insert(f, at: 0)
+			}
+		}
+	}
+	
+	func deleteFailedMessage(name: String) {
+		let usersDirURL = appGroupURL.appendingPathComponent("users")
+		let userDirURL = usersDirURL.appendingPathComponent(privateKey!.publicKey.String()).appendingPathComponent("whispers")
+		let pathURL = userDirURL.appendingPathComponent(name)
+		do {
+			try FileManager.default.removeItem(at: pathURL)
+		} catch {
+			print(error.localizedDescription)
+		}
 	}
 }
