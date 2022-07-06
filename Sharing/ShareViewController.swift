@@ -20,6 +20,8 @@ private let appGroupUserDefaults = UserDefaults.init(suiteName: "group.com.twofe
 class ShareViewController: UIViewController {
 	let container = UIHostingController(rootView: SwiftUIView(sharedData: SharedData()))
 	private var sharedData: SharedData = SharedData()
+	private var currentUserPublicKeyString = ""
+	private var viewSet = false
 	
 	private func cancelRequest() {
 		self.extensionContext!.cancelRequest(withError: ShareError.unspecified)
@@ -29,6 +31,10 @@ class ShareViewController: UIViewController {
 	}
 	
 	private func setView(full: Bool) {
+		if viewSet {
+			return
+		}
+		
 		// https://www.youtube.com/watch?v=z_9EOGDw5uk
 		self.addChild(self.container)
 		self.view.addSubview(self.container.view)
@@ -41,6 +47,8 @@ class ShareViewController: UIViewController {
 			self.container.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
 			self.container.view.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
 		}
+		
+		viewSet = true
 	}
 	
 	private func showErrorAndExit(message: String) {
@@ -50,9 +58,9 @@ class ShareViewController: UIViewController {
 		sharedData.alertShowing = true
 	}
 		
-	private func showErrorAndExitSync(message: String) {
-		return DispatchQueue.main.sync {
-			return showErrorAndExit(message: message)
+	private func showErrorAndExitAsync(message: String) {
+		return DispatchQueue.main.async {
+			return self.showErrorAndExit(message: message)
 		}
 	}
 	
@@ -68,6 +76,7 @@ class ShareViewController: UIViewController {
 		guard let currentUserPublicKey = appGroupUserDefaults.string(forKey: "currentUserPublicKey") else {
 			return showErrorAndExit(message: "请先创建新用户或登录已有用户后再进行此操作。")
 		}
+		currentUserPublicKeyString = currentUserPublicKey
 		
 		// 为什么这里总是 1 个？
 		guard let item = extensionContext?.inputItems.first as? NSExtensionItem else {
@@ -105,13 +114,13 @@ class ShareViewController: UIViewController {
 						attachment.loadItem(forTypeIdentifier: ty, options: nil, completionHandler: { data, err in
 							if let err {
 								// TODO 清理共享目录。
-								return self.showErrorAndExitSync(message: "加载数据时出错：\(err.localizedDescription)")
+								return self.showErrorAndExitAsync(message: "加载数据时出错：\(err.localizedDescription)")
 							}
 							self.loadItemCompletionHandler(data: data)
 						})
 						return
 					default:
-						return self.showErrorAndExitSync(message: "内部错误（未处理的断言类型）")
+						return self.showErrorAndExitAsync(message: "内部错误（未处理的断言类型）")
 					}
 				}
 			}
@@ -125,34 +134,65 @@ class ShareViewController: UIViewController {
 		let kMaxFileSize = 10 << 20
 
 		guard let srcURL = data as? URL else {
-			return showErrorAndExitSync(message: "无法将数据转换成 URL 类型。")
+			return showErrorAndExitAsync(message: "无法将数据转换成 URL 类型。")
 		}
 		//showErrorAndExit(message: "已转换成 URL 类型。")
 		guard let fileSize = try? srcURL.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
-			return showErrorAndExitSync(message: "无法取得文件大小")
+			return showErrorAndExitAsync(message: "无法取得文件大小")
 		}
 		if fileSize > kMaxFileSize {
-			return showErrorAndExitSync(message: "文件大小超过限制：\(fileSize) > \(kMaxFileSize)")
+			return showErrorAndExitAsync(message: "文件大小超过限制：\(fileSize) > \(kMaxFileSize)")
 		}
 		// 判断文件格式是否正确
 		guard let data = try? Data(contentsOf: srcURL) else {
-			return showErrorAndExitSync(message: "无法读取文件内容")
+			return showErrorAndExitAsync(message: "无法读取文件内容")
 		}
 		// TODO: 导不出来，直接写了。
 		if !data.starts(with: "Whipser/1.0\n".utf8) {
-			return showErrorAndExitSync(message: "文件格式不正确。")
+			return showErrorAndExitAsync(message: "文件格式不正确。")
 		}
 		
 		guard let shareDirectory = FileManager().containerURL(forSecurityApplicationGroupIdentifier: "group.com.twofei.whisper.share") else {
-			return showErrorAndExitSync(message: "无法取得共享目录")
+			return showErrorAndExitAsync(message: "无法取得共享目录")
 		}
-		let dstURL = shareDirectory.appendingPathComponent("share.bin")
+		
+		// 只复制到当前用户目录，以防止复制后切换用户
+		let usersDirURL = shareDirectory.appendingPathComponent("users")
+		let userDirURL = usersDirURL.appendingPathComponent(currentUserPublicKeyString)
+		let filesDir = userDirURL.appendingPathComponent("files")
+		do {
+			try FileManager.default.createDirectory(at: filesDir, withIntermediateDirectories: true)
+		} catch {
+			return showErrorAndExitAsync(message: "创建目录失败：\(error.localizedDescription)")
+		}
+		
+		let srcName = srcURL.lastPathComponent
+		let dstURL = filesDir.appendingPathComponent(srcName)
+		
+		// 如果文件名存在，则提示覆盖
+		if FileManager.default.fileExists(atPath: dstURL.path) {
+			DispatchQueue.main.sync {
+				self.setView(full: false)
+				sharedData.alertOverwriteMessage = "\(dstURL.lastPathComponent)"
+				sharedData.alertOverWriteOKFn = { self.copy(srcURL: srcURL, dstURL: dstURL) }
+				sharedData.alertOverWriteCancelFn = { self.cancelRequest() }
+				sharedData.alertOverwrite = true
+			}
+			return
+		}
+		
+		self.copy(srcURL: srcURL, dstURL: dstURL)
+	}
+	
+	private func copy(srcURL: URL, dstURL: URL) {
 		do {
 			try FileManager.default.secureCopyItem(at: srcURL, to: dstURL)
 		} catch {
-			return showErrorAndExitSync(message: "无法复制文件：\(error.localizedDescription)")
+			return showErrorAndExitAsync(message: "无法复制文件：\(error.localizedDescription)")
 		}
-		return showErrorAndExitSync(message: "文件已复制")
+		
+		print("已复制到路径：\(dstURL)")
+		return showErrorAndExitAsync(message: "文件已复制")
 	}
 }
 
@@ -173,6 +213,11 @@ class SharedData: ObservableObject {
 	@Published var alertShowing = false
 	@Published var fn: (() -> Void)?
 	
+	@Published var alertOverwrite = false
+	@Published var alertOverwriteMessage = ""
+	@Published var alertOverWriteCancelFn: (() -> Void)?
+	@Published var alertOverWriteOKFn: (() -> Void)?
+	
 	init() {
 		
 	}
@@ -182,13 +227,30 @@ struct SwiftUIView: View {
 	@ObservedObject var sharedData: SharedData
 	
 	var body: some View {
-		TextField("",text: $sharedData.text)
-			.alert(isPresented: $sharedData.alertShowing, content: {
-				Alert(title: Text("错误"), message: Text(sharedData.alertMessage), dismissButton: .cancel {
-					if let fn = sharedData.fn {
-						fn()
-					}
+		VStack {
+			TextField("",text: $sharedData.text)
+				.alert(isPresented: $sharedData.alertShowing, content: {
+					Alert(title: Text("错误"), message: Text(sharedData.alertMessage), dismissButton: .cancel {
+						if let fn = sharedData.fn {
+							fn()
+						}
+					})
 				})
-			})
+			Text("hidden")
+				.hidden()
+				.alert(isPresented: $sharedData.alertOverwrite, content: {
+					Alert(title: Text("文件已经存在，是否覆盖？"), message: Text(sharedData.alertOverwriteMessage), primaryButton: .destructive(Text("覆盖")) {
+						if let fn = sharedData.alertOverWriteOKFn {
+							sharedData.alertOverwrite = false
+							fn()
+						}
+					}, secondaryButton: .cancel {
+						if let fn = sharedData.alertOverWriteCancelFn {
+							sharedData.alertOverwrite = false
+							fn()
+						}
+					})
+				})
+		}
 	}
 }

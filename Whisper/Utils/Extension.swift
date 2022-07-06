@@ -41,3 +41,7 @@ extension UIApplication {
 	}
 }
 
+// https://www.hackingwithswift.com/example-code/language/how-to-throw-errors-using-strings
+extension String: LocalizedError {
+	public var errorDescription: String? { return self }
+}

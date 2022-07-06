@@ -68,3 +68,16 @@ SwiftUI：
 
 * [SwiftUI: @State vs @StateObject vs @ObservedObject vs @EnvironmentObject | by Sam Wright | Level Up Coding](https://levelup.gitconnected.com/state-vs-stateobject-vs-observedobject-vs-environmentobject-in-swiftui-81e2913d63f9)
   * 比较详细的说明了几种状态管理的区别，特别是后面的总结比较好。
+
+## 07.06
+
+SwiftUI
+
+* [How to show multiple alerts on the same view in SwiftUI | Sarunw](https://sarunw.com/posts/how-to-show-multiple-alerts-on-the-same-view-in-swiftui/)
+  * 多个 alert 无法工作的问题
+
+错误处理：
+
+* [How to throw errors using strings - free Swift 5.4 example code and tips](https://www.hackingwithswift.com/example-code/language/how-to-throw-errors-using-strings)
+  * 抛出字符串型错误。
+

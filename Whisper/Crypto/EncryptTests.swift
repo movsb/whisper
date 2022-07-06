@@ -26,7 +26,7 @@ final class EncryptTests: XCTestCase {
 		let pub = pri.publicKey
 		let fileKey:[UInt8] = [8,1,2,3]
 		let encrypted = try EncryptFileKey(sender: pri, receiver: pub, fileKey: fileKey)
-		let decrypted = try DecryptFileKey(receiver: pri, sender: pub, fileKey: encrypted)
+		let decrypted = try DecryptFileKey(receiver: pri, sender: pub, fileKey: [UInt8](encrypted))
 		print(decrypted)
 	}
 	func testEncryptMessage() throws {
@@ -41,21 +41,17 @@ final class EncryptTests: XCTestCase {
 		let encrypted = try EncryptMessage(fileKey: fileKey, message: message)
 		print(encrypted)
 		
-		let decrypted = try DecryptMessage(encrypted: encrypted, fileKey: fileKey)
+		let decrypted = try DecryptMessage(encrypted: [UInt8](encrypted), fileKey: fileKey)
 		print(decrypted)
-	}
-	func testSectionBytes() throws {
-		let pri = NewPrivateKey()
-		let fileKey = try NewFileKey()
-		let encryptedFileKey = try EncryptFileKey(sender: pri, receiver: pri.publicKey, fileKey: fileKey)
-		let section = Section(publicKey: pri.publicKey, encryptedFileKey: encryptedFileKey)
-		print(section.bytes())
 	}
 	func testNewFile() throws {
 		let pri = NewPrivateKey()
+		let fk = try NewFileKey()
 		let recipients = [pri.publicKey]
-		let file = try NewFile(sender: pri, recipients: recipients, message: "雪儿")
-		let bytesData = Data(file.bytes())
-		print(bytesData.base64EncodedString())
+		let file = File(fileHeader: kFileHeader, recipients: recipients, title: "标题", content: "内容")
+		let encrypted = try file.encode(sender: pri, fileKey: fk)
+		let newPri = NewPrivateKey()
+		let decrypted = try File.decode(data: encrypted, recipient: newPri)
+		print(decrypted)
 	}
 }
