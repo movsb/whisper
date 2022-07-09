@@ -96,9 +96,18 @@ SwiftUI
   * 自带的图片选择居然不支持多选，其它的又有权限问题，干！
   * [ios - Select Multiple Images (UIImagePickerController or Photos.app Share UI) - Stack Overflow](https://stackoverflow.com/a/64706937/3628322)
 
+## 07.08
+
+密钥学：
+
+* [Introducing CryptoKit | raywenderlich.com](https://www.raywenderlich.com/10846296-introducing-cryptokit)
+* [swift - CryptoKit encrypt file too big for memory - Stack Overflow](https://stackoverflow.com/q/60607679/3628322)
+  * AES.GCM 是流加密模式，为什么不支持流数据输入？为了并行？
 
 ## 07.09
 
 手势操作：
 
 * [Long Press Gesture - SwiftUI Handbook - Design+Code](https://designcode.io/swiftui-handbook-long-press)
+
+

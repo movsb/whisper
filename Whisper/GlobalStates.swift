@@ -149,13 +149,24 @@ class GlobalStates: ObservableObject {
 				return
 			}
 			let data = try Data(contentsOf: pathURL)
+			var messageId: UUID? = nil
 			do {
 				let file = try File.decode(data: data, recipient: privateKey!)
 				let message = Message(title: file.title, receipients: [privateKey!.publicKey.String()], content: file.content)
+				messageId = message.id
+				for url in file.images {
+					let _ = try saveMessageImage(messageID: message.id, srcURL: url)
+				}
+				for url in file.videos {
+					let _ = try saveMessageVideo(messageID: message.id, srcURL: url)
+				}
 				message.read = false
 				messages.append(message)
 				try? FileManager.default.removeItem(at: pathURL)
 			} catch {
+				if let id = messageId {
+					try removeMessageDir(messageID: id)
+				}
 				failed.append(FailedMessage(name: pathURL.lastPathComponent, reason: error.localizedDescription))
 			}
 		}
@@ -190,6 +201,10 @@ class GlobalStates: ObservableObject {
 		try GlobalStates.createDir(url: imagesDir)
 		let dstURL = imagesDir.appendingPathComponent(srcURL.lastPathComponent)
 		try FileManager.default.secureCopyItem(at: srcURL, to: dstURL)
+		print("拷贝文件：", dstURL)
+		if let fileSize = try? dstURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+			print("文件大小：", ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .binary))
+		}
 		return dstURL
 	}
 	func saveMessageImage(messageID: UUID, uiImage: UIImage) throws -> URL {
@@ -202,6 +217,7 @@ class GlobalStates: ObservableObject {
 			throw "无效 UIImage 图片"
 		}
 		try data.write(to: dstURL)
+		print("拷贝文件：", dstURL)
 		print("文件大小：\(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary))")
 		return dstURL
 	}
@@ -213,6 +229,9 @@ class GlobalStates: ObservableObject {
 		let dstURL = imagesDir.appendingPathComponent(srcURL.lastPathComponent)
 		try FileManager.default.secureCopyItem(at: srcURL, to: dstURL)
 		print("拷贝视频文件：", dstURL)
+		if let fileSize = try? dstURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+			print("视频文件大小：", ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .binary))
+		}
 		return dstURL
 	}
 	func loadMessageMedia(forImage: Bool, messageID: UUID) throws -> [URL] {

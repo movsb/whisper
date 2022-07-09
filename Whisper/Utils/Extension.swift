@@ -23,7 +23,7 @@ extension Data {
 			return URL(fileURLWithPath: filePath)
 
 		} catch {
-			fatalError("Error writing the file: \(error.localizedDescription)")
+			throw "Error writing the file: \(error.localizedDescription)"
 		}
 	}
 	func toTemporaryFileWithDateName() throws -> URL {

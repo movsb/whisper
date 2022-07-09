@@ -42,14 +42,23 @@ struct ComposeMessageView: View {
 			return
 		}
 		
+		// TODO
+		if !imagesLoaded {
+			
+		}
+		if !videosLoaded {
+			
+		}
+		
 		do {
 			let recipients = globalStates.contacts.filter { contact in message.receipients.contains(contact.publicKey) }.map{PublicKey.fromString(s: $0.publicKey)!}
-			let file = File(fileHeader: kFileHeader, recipients: recipients, title: message.title, content: message.content)
+			let file = File(fileHeader: kFileHeader, recipients: recipients, title: message.title, content: message.content, images: imageURLs, videos: videoURLs)
 			let encoded = try file.encode(sender: globalStates.privateKey!, fileKey: try! NewFileKey())
 			let fileURL = try encoded.toTemporaryFileWithDateName()
+			print("文件大小：", encoded.count, fileURL)
 			let activityController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
 			UIApplication.shared.windows.first?.rootViewController!.present(activityController, animated: true, completion: nil)
-			try? FileManager.default.removeItem(at: fileURL)
+			// try? FileManager.default.removeItem(at: fileURL)
 		} catch {
 			alertMessage = error.localizedDescription
 			showingAlert = true

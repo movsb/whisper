@@ -59,6 +59,9 @@ struct File {
 	
 	var title: String
 	var content: String
+	
+	var images: [URL]
+	var videos: [URL]
 
 	func encode(sender: PrivateKey, fileKey: [UInt8]) throws -> Data {
 		var data = Data()
@@ -94,14 +97,69 @@ struct File {
 		data.append(littleN, count: littleN.count)
 		data.append(encryptedMessage)
 		
+		data.writeUInt32(n: UInt32(images.count))
+		for url in images {
+			let d = try encodeFile(fileKey: fileKey, url: url)
+			data.append(d)
+		}
+		data.writeUInt32(n: UInt32(videos.count))
+		for url in videos {
+			let d = try encodeFile(fileKey: fileKey, url: url)
+			data.append(d)
+		}
+		
 		return data
 	}
 	
-	init(fileHeader: String, recipients: [PublicKey], title: String, content: String) {
+	private func encodeFile(fileKey: [UInt8], url: URL) throws -> Data {
+		let fileName = url.lastPathComponent
+		let input = try Data(contentsOf: url)
+		
+		var output = Data()
+		
+		let encryptedFileName = try EncryptMessage(fileKey: fileKey, message: fileName)
+		output.writeUInt32(n: UInt32(encryptedFileName.count))
+		output.append(encryptedFileName)
+		
+		let encrypted = try EncryptData(fileKey: fileKey, data: input)
+		output.writeUInt32(n: UInt32(encrypted.count))
+		output.append(encrypted)
+		
+		return output
+	}
+	
+	static private func decodeFile(fileKey: [UInt8], data: Data) throws -> (Data,String,Data) {
+		guard var (d, n) = data.readUInt32() else {
+			throw "文件不完整。"
+		}
+		if d.count < n {
+			throw "文件不完整。"
+		}
+		let encryptedFileName = d[0..<n]
+		let decryptedFileName = try DecryptData(data: encryptedFileName, fileKey: fileKey)
+		guard let name = String(data: decryptedFileName, encoding: .utf8) else {
+			throw "文件名编码不正确。"
+		}
+		d = d.advanced(by: Int(n))
+		
+		guard let (dd, nn) = d.readUInt32() else {
+			throw "文件不完整。"
+		}
+		if dd.count < nn {
+			throw "文件不完整"
+		}
+		let encryptedData = dd[0..<nn]
+		let decryptedData = try DecryptData(data: encryptedData, fileKey: fileKey)
+		return (dd.advanced(by: Int(nn)), name, decryptedData)
+	}
+	
+	init(fileHeader: String, recipients: [PublicKey], title: String, content: String, images: [URL], videos: [URL]) {
 		self.fileHeader = fileHeader
 		self.recipients = recipients
 		self.title = title
 		self.content = content
+		self.images = images
+		self.videos = videos
 	}
 	
 	static func decode(data: Data, recipient: PrivateKey) throws -> File {
@@ -137,7 +195,7 @@ struct File {
 			if d.count < 1 {
 				throw "文件格式不正确。"
 			}
-			let nData = d.first!
+			let nData = Int(d.first!)
 			d = d.advanced(by: 1)
 			if d.count < nData {
 				throw "文件格式不正确。"
@@ -161,9 +219,9 @@ struct File {
 		}
 		let nContent = UInt32(littleEndian: d[0..<4].withUnsafeBytes { $0.pointee })
 		d = d.advanced(by: 4)
-		if d.count != nContent {
-			throw "缺少内容数据。"
-		}
+//		if d.count != nContent {
+//			throw "缺少内容数据。"
+//		}
 		let encryptedMessage = d[0..<nContent]
 		let combined = try DecryptMessage(encrypted: [UInt8](encryptedMessage), fileKey: fileKey!)
 		let parts = combined.split(separator: "\0")
@@ -172,8 +230,52 @@ struct File {
 		if parts.count == 2 {
 			content = String(parts[1])
 		}
+		d = d.advanced(by: Int(nContent))
 		
-		return File(fileHeader: kFileHeader, recipients: [publicKey], title: title, content: content)
+		var images: [URL] = []
+		guard let (dd, nImages) = d.readUInt32() else {
+			throw "文件不完整。"
+		}
+		d = dd
+		for _ in 0..<nImages {
+			let (dd, name, content) = try File.decodeFile(fileKey: fileKey!, data: d)
+			let url = try content.toTemporaryFile(fileName: name)
+			images.append(url)
+			d = dd
+		}
+		
+		var videos: [URL] = []
+		guard let (dd, nVideos) = d.readUInt32() else {
+			throw "文件不完整。"
+		}
+		d = dd
+		for _ in 0..<nVideos {
+			let (dd, name, content) = try File.decodeFile(fileKey: fileKey!, data: d)
+			let url = try content.toTemporaryFile(fileName: name)
+			videos.append(url)
+			d = dd
+		}
+		
+		if d.count > 0 {
+			throw "文件有未处理的内容。"
+		}
+		
+		return File(fileHeader: kFileHeader, recipients: [publicKey], title: title, content: content, images: images, videos: videos)
 	}
 }
 
+
+extension Data {
+	mutating func writeUInt32(n: UInt32) {
+		let littleN = Swift.withUnsafeBytes(of: n.littleEndian) {Array($0)}
+		self.append(littleN, count: littleN.count)
+	}
+	func readUInt32() -> (Data,UInt32)? {
+		if self.count < 4 {
+			return nil
+		}
+		let n = UInt32(littleEndian: self[0..<4].withUnsafeBytes { $0.pointee })
+		let d = self.advanced(by: 4)
+		return (d, n)
+	}
+}

@@ -132,6 +132,10 @@ class ShareViewController: UIViewController {
 	
 	private func loadItemCompletionHandler(data: NSSecureCoding?) {
 		let kMaxFileSize = 10 << 20
+		
+//		guard let d = data as? Data else {
+//			return showErrorAndExitAsync(message: "无法将数据转换成 Data 类型。")
+//		}
 
 		guard let srcURL = data as? URL else {
 			return showErrorAndExitAsync(message: "无法将数据转换成 URL 类型。")

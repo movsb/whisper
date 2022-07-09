@@ -121,8 +121,6 @@ struct MessagesView: View {
 			}
 		}
 		.onReceive(refreshInboxTimer) { _ in
-			// TODO
-			return
 			if let (failed, found) = try? globalStates.loadInbox() {
 				globalStates.messages.insert(contentsOf: found, at: 0)
 				globalStates.updateFailedMessages(failed: failed)

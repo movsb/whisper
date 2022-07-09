@@ -95,3 +95,14 @@ func DecryptMessage(encrypted: [UInt8], fileKey: [UInt8]) throws -> String {
 	let opened = try AES.GCM.open(sealedBox, using: SymmetricKey(data: fileKey))
 	return String(data: opened, encoding: .utf8)!
 }
+
+func EncryptData(fileKey: [UInt8], data: Data) throws -> Data {
+	let symmetricKey = SymmetricKey(data: fileKey)
+	let sealedBox = try AES.GCM.seal(data, using: symmetricKey, nonce: AES.GCM.Nonce())
+	return sealedBox.combined!
+}
+
+func DecryptData(data: Data, fileKey: [UInt8]) throws -> Data {
+	let sealedBox = try AES.GCM.SealedBox(combined: data)
+	return try AES.GCM.open(sealedBox, using: SymmetricKey(data: fileKey))
+}
