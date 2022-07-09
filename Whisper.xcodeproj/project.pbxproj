@@ -16,6 +16,9 @@
 		2B6C8CA4286DF0DF00A1CB8F /* Encrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B6C8CA3286DF0DF00A1CB8F /* Encrypt.swift */; };
 		2B6C8CB5286E182800A1CB8F /* WhisperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B6C8CB4286E182800A1CB8F /* WhisperTests.swift */; };
 		2B9830E52868BADB000B26DE /* Curve25519.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9830E42868BADB000B26DE /* Curve25519.swift */; };
+		2BA6D4AB28771BA300683FFF /* FilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6D4AA28771BA300683FFF /* FilesView.swift */; };
+		2BA6D4AD28773A6700683FFF /* FilesPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6D4AC28773A6700683FFF /* FilesPicker.swift */; };
+		2BB78B53287885910074B52F /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB78B52287885910074B52F /* ImagePicker.swift */; };
 		2BC11A9C2868C3000002D61D /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9B2868C3000002D61D /* WelcomeView.swift */; };
 		2BC11A9E286900A60002D61D /* NewContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9D286900A60002D61D /* NewContact.swift */; };
 		2BC11AA02869F4710002D61D /* ContactsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9F2869F4710002D61D /* ContactsList.swift */; };
@@ -81,6 +84,9 @@
 		2B6C8CB2286E182800A1CB8F /* WhisperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhisperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B6C8CB4286E182800A1CB8F /* WhisperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperTests.swift; sourceTree = "<group>"; };
 		2B9830E42868BADB000B26DE /* Curve25519.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Curve25519.swift; sourceTree = "<group>"; };
+		2BA6D4AA28771BA300683FFF /* FilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesView.swift; sourceTree = "<group>"; };
+		2BA6D4AC28773A6700683FFF /* FilesPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesPicker.swift; sourceTree = "<group>"; };
+		2BB78B52287885910074B52F /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		2BC11A9B2868C3000002D61D /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		2BC11A9D286900A60002D61D /* NewContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContact.swift; sourceTree = "<group>"; };
 		2BC11A9F2869F4710002D61D /* ContactsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsList.swift; sourceTree = "<group>"; };
@@ -155,6 +161,8 @@
 			children = (
 				2BEC935E28686E5D00B0BCCF /* MessagesView.swift */,
 				2B088511286B460F00997C1D /* ComposeMessageView.swift */,
+				2BA6D4AC28773A6700683FFF /* FilesPicker.swift */,
+				2BB78B52287885910074B52F /* ImagePicker.swift */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
@@ -175,6 +183,14 @@
 				2B2748E2286E208200D1807E /* EncryptTests.swift */,
 			);
 			path = Crypto;
+			sourceTree = "<group>";
+		};
+		2BA6D4A928771B7D00683FFF /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				2BA6D4AA28771BA300683FFF /* FilesView.swift */,
+			);
+			path = Files;
 			sourceTree = "<group>";
 		};
 		2BC11A9A2868C2D40002D61D /* Welcome */ = {
@@ -226,6 +242,7 @@
 		2BEC934B286869AA00B0BCCF /* Whisper */ = {
 			isa = PBXGroup;
 			children = (
+				2BA6D4A928771B7D00683FFF /* Files */,
 				2BD62F3C2873593C001DFC7D /* Utils */,
 				2B14448F2871BA7900990936 /* Whisper.entitlements */,
 				2B088510286B3DC100997C1D /* Contacts */,
@@ -407,6 +424,7 @@
 				2BEC9361286877EB00B0BCCF /* SettingsView.swift in Sources */,
 				2BEC9363286878C300B0BCCF /* ContactDetailsView.swift in Sources */,
 				2BEC935F28686E5D00B0BCCF /* MessagesView.swift in Sources */,
+				2BA6D4AB28771BA300683FFF /* FilesView.swift in Sources */,
 				2BC11A9E286900A60002D61D /* NewContact.swift in Sources */,
 				2BEC935D28686D1700B0BCCF /* ContactsView.swift in Sources */,
 				2BEC934F286869AB00B0BCCF /* ContentView.swift in Sources */,
@@ -416,12 +434,14 @@
 				2BEC934D286869AB00B0BCCF /* WhisperApp.swift in Sources */,
 				2B6C8CA4286DF0DF00A1CB8F /* Encrypt.swift in Sources */,
 				2B14448E286F90D300990936 /* SFSymbolsView.swift in Sources */,
+				2BB78B53287885910074B52F /* ImagePicker.swift in Sources */,
 				2B088512286B460F00997C1D /* ComposeMessageView.swift in Sources */,
 				2BF348B128749B5C002ECE39 /* Extension.swift in Sources */,
 				2BEC936728687C0700B0BCCF /* ContactRow.swift in Sources */,
 				2BD62F4028746C59001DFC7D /* Spinning.swift in Sources */,
 				2B394CF8286B802D007EBE92 /* SelectContactsView.swift in Sources */,
 				2BC11AA02869F4710002D61D /* ContactsList.swift in Sources */,
+				2BA6D4AD28773A6700683FFF /* FilesPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +686,8 @@
 				DEVELOPMENT_TEAM = U7W7348666;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "允许访问相机以拍照。";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "允许访问麦克风以录制视频。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -698,6 +720,8 @@
 				DEVELOPMENT_TEAM = U7W7348666;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "允许访问相机以拍照。";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "允许访问麦克风以录制视频。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

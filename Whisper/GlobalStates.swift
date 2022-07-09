@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 var appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.twofei.whisper.share")!
 var appGroupUserDefaults = UserDefaults.init(suiteName: "group.com.twofei.whisper.share")!
@@ -25,6 +26,10 @@ class GlobalStates: ObservableObject {
 		}
 		let user = userDir()
 		try FileManager.default.createDirectory(at: user, withIntermediateDirectories: true)
+	}
+	
+	static private func createDir(url: URL) throws {
+		try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
 	}
 	
 	func userDir() -> URL {
@@ -175,5 +180,56 @@ class GlobalStates: ObservableObject {
 		} catch {
 			print(error.localizedDescription)
 		}
+	}
+	
+	// 消息附件管理
+	func saveMessageImage(messageID: UUID, srcURL: URL) throws -> URL {
+		let imagesDir = userDir().appendingPathComponent("messages")
+			.appendingPathComponent(messageID.uuidString)
+			.appendingPathComponent("images")
+		try GlobalStates.createDir(url: imagesDir)
+		let dstURL = imagesDir.appendingPathComponent(srcURL.lastPathComponent)
+		try FileManager.default.secureCopyItem(at: srcURL, to: dstURL)
+		return dstURL
+	}
+	func saveMessageImage(messageID: UUID, uiImage: UIImage) throws -> URL {
+		let imagesDir = userDir().appendingPathComponent("messages")
+			.appendingPathComponent(messageID.uuidString)
+			.appendingPathComponent("images")
+		try GlobalStates.createDir(url: imagesDir)
+		let dstURL = imagesDir.appendingPathComponent(UUID().uuidString + ".jpeg")
+		guard let data = uiImage.jpegData(compressionQuality: 0.8) else {
+			throw "无效 UIImage 图片"
+		}
+		try data.write(to: dstURL)
+		print("文件大小：\(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary))")
+		return dstURL
+	}
+	func saveMessageVideo(messageID: UUID, srcURL: URL) throws -> URL {
+		let imagesDir = userDir().appendingPathComponent("messages")
+			.appendingPathComponent(messageID.uuidString)
+			.appendingPathComponent("videos")
+		try GlobalStates.createDir(url: imagesDir)
+		let dstURL = imagesDir.appendingPathComponent(srcURL.lastPathComponent)
+		try FileManager.default.secureCopyItem(at: srcURL, to: dstURL)
+		print("拷贝视频文件：", dstURL)
+		return dstURL
+	}
+	func loadMessageMedia(forImage: Bool, messageID: UUID) throws -> [URL] {
+		let dir = userDir().appendingPathComponent("messages")
+			.appendingPathComponent(messageID.uuidString)
+			.appendingPathComponent(forImage ? "images" : "videos")
+		if !FileManager.default.fileExists(atPath: dir.path) {
+			print("没有消息媒体文件")
+			return []
+		}
+		let entries = try FileManager.default.contentsOfDirectory(atPath: dir.path)
+		let fullPaths = entries.map{ dir.appendingPathComponent($0) }
+		return fullPaths
+	}
+	// 删除消息目录
+	func removeMessageDir(messageID: UUID) throws {
+		let dir = userDir().appendingPathComponent("messages").appendingPathComponent(messageID.uuidString)
+		try FileManager.default.removeItem(at: dir)
 	}
 }

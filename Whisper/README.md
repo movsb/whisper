@@ -86,3 +86,19 @@ SwiftUI
 
 * [Triggering events repeatedly using a timer - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/triggering-events-repeatedly-using-a-timer)
 
+
+## 07.07
+
+照片选择、拍照、拍视频：
+
+* [ImagePicker - SwiftUI Advanced Handbook - Design+Code](https://designcode.io/swiftui-advanced-handbook-imagepicker)
+* [ios - How to select Multiple images from UIImagePickerController - Stack Overflow](https://stackoverflow.com/questions/20756899/how-to-select-multiple-images-from-uiimagepickercontroller)
+  * 自带的图片选择居然不支持多选，其它的又有权限问题，干！
+  * [ios - Select Multiple Images (UIImagePickerController or Photos.app Share UI) - Stack Overflow](https://stackoverflow.com/a/64706937/3628322)
+
+
+## 07.09
+
+手势操作：
+
+* [Long Press Gesture - SwiftUI Handbook - Design+Code](https://designcode.io/swiftui-handbook-long-press)

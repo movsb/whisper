@@ -35,10 +35,10 @@ class Message: Identifiable, Codable {
 	}
 	
 	static func example() -> Message {
-		return Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "content")
+		return Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "")
 	}
 	static func exampleUnread() -> Message {
-		let m = Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "content")
+		let m = Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "")
 		m.read = false
 		return m
 	}
@@ -67,7 +67,7 @@ struct FailedMessageRow: View {
 				.frame(width: 6, height: 6)
 				.foregroundColor(.red)
 			VStack(alignment: .leading) {
-				Text(failed.name).bold()
+				Text(failed.name)
 				Text(failed.reason).font(.footnote).foregroundColor(.gray)
 			}
 		}
@@ -76,6 +76,9 @@ struct FailedMessageRow: View {
 
 struct MessagesView: View {
 	@EnvironmentObject var globalStates: GlobalStates
+	
+	@State private var alertMessage = ""
+	@State private var showingAlert = false
 	
 	// 自动刷新收件箱的消息。
 	let refreshInboxTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
@@ -109,7 +112,8 @@ struct MessagesView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				Button(action: {
-					let message = Message(title: "无标题", receipients: [], content: "默认内容")
+					let message = Message(title: "新消息", receipients: [], content: "")
+					message.read = false
 					globalStates.messages.insert(message, at: 0)
 				}, label: {
 					Image(systemName: "plus")
@@ -117,6 +121,8 @@ struct MessagesView: View {
 			}
 		}
 		.onReceive(refreshInboxTimer) { _ in
+			// TODO
+			return
 			if let (failed, found) = try? globalStates.loadInbox() {
 				globalStates.messages.insert(contentsOf: found, at: 0)
 				globalStates.updateFailedMessages(failed: failed)
@@ -124,9 +130,22 @@ struct MessagesView: View {
 				print("错误内容：\(failed)")
 			}
 		}
+		.alert(isPresented: $showingAlert) {
+			Alert(title: Text("错误"), message: Text(alertMessage))
+		}
     }
 	
 	private func delete(at offsets: IndexSet) {
+		do {
+			try offsets.forEach { i in
+				let m = globalStates.messages[i]
+				try globalStates.removeMessageDir(messageID: m.id)
+			}
+		} catch {
+			alertMessage = error.localizedDescription
+			showingAlert = true
+			return
+		}
 		globalStates.messages.remove(atOffsets: offsets)
 	}
 	

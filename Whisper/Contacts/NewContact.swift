@@ -7,7 +7,6 @@
 
 import SwiftUI
 import CryptoKit
-import SFSymbolsPicker
 
 struct NewContactView: View {
 	@State private var name: String = ""

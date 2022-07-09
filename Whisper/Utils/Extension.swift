@@ -45,3 +45,15 @@ extension UIApplication {
 extension String: LocalizedError {
 	public var errorDescription: String? { return self }
 }
+
+extension FileManager {
+	// 安全复制文件
+	// https://stackoverflow.com/a/48444782/3628322
+	public func secureCopyItem(at srcURL: URL, to dstURL: URL) throws {
+		if self.fileExists(atPath: dstURL.path) {
+			try self.removeItem(at: dstURL)
+		}
+		try self.copyItem(at: srcURL, to: dstURL)
+	}
+}
+
