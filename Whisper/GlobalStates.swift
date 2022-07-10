@@ -255,6 +255,8 @@ class GlobalStates: ObservableObject {
 	// 删除消息目录
 	func removeMessageDir(messageID: UUID) throws {
 		let dir = userDir().appendingPathComponent("messages").appendingPathComponent(messageID.uuidString)
-		try FileManager.default.removeItem(at: dir)
+		if FileManager.default.fileExists(atPath: dir.path) {
+			try FileManager.default.removeItem(at: dir)
+		}
 	}
 }
