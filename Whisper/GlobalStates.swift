@@ -12,6 +12,7 @@ var appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupId
 var appGroupUserDefaults = UserDefaults.init(suiteName: "group.com.twofei.whisper.share")!
 
 class GlobalStates: ObservableObject {
+	@Published var firstUse = false
 	@Published var loggedin = false
 	@Published var messages: [Message] = []
 	@Published var contacts: [Contact] = []

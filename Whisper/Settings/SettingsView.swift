@@ -38,9 +38,25 @@ struct SettingsView: View {
 						}, label: {
 							Text("隐私政策")
 						})
+						NavigationLink(destination: {
+							techDetails
+								.navigationTitle("技术细节")
+								.navigationBarTitleDisplayMode(.inline)
+								.padding()
+						}, label: {
+							Text("技术细节")
+						})
 					}
 				}
 			}
+		}
+	}
+	
+	private var techDetails: some View {
+		ScrollView {
+			Text("""
+本应用使用 Curve25519 椭圆曲线进行公钥加密（256 位密钥大小），使用 AES 256 位 GCM 模式进行对称加密（考虑使用 Chacha20-Poly1305 替代），未使用 AEAD。
+""")
 		}
 	}
 }

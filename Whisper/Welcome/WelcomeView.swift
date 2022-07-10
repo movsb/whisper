@@ -19,8 +19,6 @@ struct WelcomeView: View {
 	var body: some View {
 		if !globalStates.loggedin {
 			VStack {
-				Text("欢迎").font(.title).bold()
-					.padding()
 				Text("Whisper")
 					.font(.largeTitle)
 					.bold()
@@ -60,6 +58,7 @@ struct WelcomeView: View {
 			return
 		}
 		
+		globalStates.firstUse = true
 		globalStates.loggedin = true
 	}
 	

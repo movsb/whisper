@@ -33,6 +33,10 @@ struct ContentView: View {
 				try! globalStates.saveContacts()
 			}
 		}
+		.popover(isPresented: $globalStates.firstUse) {
+			FirstUseView()
+				.padding(EdgeInsets(top: 50, leading: 50, bottom: 50, trailing: 50))
+		}
 	}
 }
 
