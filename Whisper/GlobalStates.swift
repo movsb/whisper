@@ -17,6 +17,12 @@ class GlobalStates: ObservableObject {
 	@Published var contacts: [Contact] = []
 	@Published var failedMessages: [FailedMessage] = []
 	
+	init() {}
+	init(privateKey: PrivateKey) {
+		self.privateKey = privateKey
+		self.loggedin = true
+	}
+	
 	var privateKey: PrivateKey?
 	
 	// 以公钥命名的用户目录，登录后立即调用。

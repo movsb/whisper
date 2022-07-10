@@ -18,6 +18,8 @@
 		2B9830E52868BADB000B26DE /* Curve25519.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9830E42868BADB000B26DE /* Curve25519.swift */; };
 		2BA6D4AB28771BA300683FFF /* FilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6D4AA28771BA300683FFF /* FilesView.swift */; };
 		2BA6D4AD28773A6700683FFF /* FilesPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6D4AC28773A6700683FFF /* FilesPicker.swift */; };
+		2BB29863287AB87400289054 /* Me.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB29862287AB87400289054 /* Me.swift */; };
+		2BB29865287AC05800289054 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB29864287AC05800289054 /* PrivacyView.swift */; };
 		2BB78B53287885910074B52F /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB78B52287885910074B52F /* ImagePicker.swift */; };
 		2BC11A9C2868C3000002D61D /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9B2868C3000002D61D /* WelcomeView.swift */; };
 		2BC11A9E286900A60002D61D /* NewContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC11A9D286900A60002D61D /* NewContact.swift */; };
@@ -86,6 +88,8 @@
 		2B9830E42868BADB000B26DE /* Curve25519.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Curve25519.swift; sourceTree = "<group>"; };
 		2BA6D4AA28771BA300683FFF /* FilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesView.swift; sourceTree = "<group>"; };
 		2BA6D4AC28773A6700683FFF /* FilesPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesPicker.swift; sourceTree = "<group>"; };
+		2BB29862287AB87400289054 /* Me.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Me.swift; sourceTree = "<group>"; };
+		2BB29864287AC05800289054 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		2BB78B52287885910074B52F /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		2BC11A9B2868C3000002D61D /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		2BC11A9D286900A60002D61D /* NewContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContact.swift; sourceTree = "<group>"; };
@@ -205,6 +209,8 @@
 			isa = PBXGroup;
 			children = (
 				2BEC9360286877EB00B0BCCF /* SettingsView.swift */,
+				2BB29862287AB87400289054 /* Me.swift */,
+				2BB29864287AC05800289054 /* PrivacyView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -431,8 +437,10 @@
 				2BC11A9C2868C3000002D61D /* WelcomeView.swift in Sources */,
 				2BD62F3E287359FC001DFC7D /* AlertTextField.swift in Sources */,
 				2B9830E52868BADB000B26DE /* Curve25519.swift in Sources */,
+				2BB29863287AB87400289054 /* Me.swift in Sources */,
 				2BEC934D286869AB00B0BCCF /* WhisperApp.swift in Sources */,
 				2B6C8CA4286DF0DF00A1CB8F /* Encrypt.swift in Sources */,
+				2BB29865287AC05800289054 /* PrivacyView.swift in Sources */,
 				2B14448E286F90D300990936 /* SFSymbolsView.swift in Sources */,
 				2BB78B53287885910074B52F /* ImagePicker.swift in Sources */,
 				2B088512286B460F00997C1D /* ComposeMessageView.swift in Sources */,
