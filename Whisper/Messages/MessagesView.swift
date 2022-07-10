@@ -122,7 +122,10 @@ struct MessagesView: View {
 		}
 		.onReceive(refreshInboxTimer) { _ in
 			if let (failed, found) = try? globalStates.loadInbox() {
-				globalStates.messages.insert(contentsOf: found, at: 0)
+				// 避免刷新
+				if found.count > 0 {
+					globalStates.messages.insert(contentsOf: found, at: 0)
+				}
 				globalStates.updateFailedMessages(failed: failed)
 				print("刷新消息，找到 \(found.count) 条消息")
 				print("错误内容：\(failed)")
@@ -131,7 +134,7 @@ struct MessagesView: View {
 		.alert(isPresented: $showingAlert) {
 			Alert(title: Text("错误"), message: Text(alertMessage))
 		}
-    }
+	}
 	
 	private func delete(at offsets: IndexSet) {
 		do {

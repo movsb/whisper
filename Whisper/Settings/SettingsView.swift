@@ -79,6 +79,9 @@ struct SettingsView: View {
 		try! globalStates.saveMessages()
 		try! globalStates.saveContacts()
 		globalStates.removeLastUser()
+		globalStates.messages = []
+		globalStates.contacts = []
+		globalStates.failedMessages = []
 		globalStates.loggedin = false
 		// 这里不能清 privateKey，会崩溃。
 	}

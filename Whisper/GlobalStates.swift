@@ -64,7 +64,6 @@ class GlobalStates: ObservableObject {
 		return privateKey!
 	}
 	
-	// 只是做个备份，没有它用。
 	func saveUserPrivateKey() throws {
 		let userDir = GlobalStates.userDir(publicKey: privateKey!.publicKey)
 		let privateKeyFile = userDir.appendingPathComponent("privateKey")
