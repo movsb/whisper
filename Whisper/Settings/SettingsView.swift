@@ -38,14 +38,14 @@ struct SettingsView: View {
 						}, label: {
 							Text("隐私政策")
 						})
-						NavigationLink(destination: {
-							techDetails
-								.navigationTitle("技术细节")
-								.navigationBarTitleDisplayMode(.inline)
-								.padding()
-						}, label: {
-							Text("技术细节")
-						})
+//						NavigationLink(destination: {
+//							techDetails
+//								.navigationTitle("技术细节")
+//								.navigationBarTitleDisplayMode(.inline)
+//								.padding()
+//						}, label: {
+//							Text("技术细节")
+//						})
 					}
 				}
 			}
