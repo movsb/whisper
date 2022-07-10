@@ -92,6 +92,7 @@
 		2BB29862287AB87400289054 /* Me.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Me.swift; sourceTree = "<group>"; };
 		2BB29864287AC05800289054 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 		2BB29866287AC57600289054 /* FirstUseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstUseView.swift; sourceTree = "<group>"; };
+		2BB2986B287B314300289054 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2BB78B52287885910074B52F /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		2BC11A9B2868C3000002D61D /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		2BC11A9D286900A60002D61D /* NewContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContact.swift; sourceTree = "<group>"; };
@@ -251,6 +252,7 @@
 		2BEC934B286869AA00B0BCCF /* Whisper */ = {
 			isa = PBXGroup;
 			children = (
+				2BB2986B287B314300289054 /* Info.plist */,
 				2BA6D4A928771B7D00683FFF /* Files */,
 				2BD62F3C2873593C001DFC7D /* Utils */,
 				2B14448F2871BA7900990936 /* Whisper.entitlements */,
@@ -698,6 +700,7 @@
 				DEVELOPMENT_TEAM = U7W7348666;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Whisper/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "允许访问相机以拍照。";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "允许访问麦克风以录制视频。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -736,6 +739,7 @@
 				DEVELOPMENT_TEAM = U7W7348666;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Whisper/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "允许访问相机以拍照。";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "允许访问麦克风以录制视频。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

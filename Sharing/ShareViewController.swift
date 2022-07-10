@@ -131,7 +131,7 @@ class ShareViewController: UIViewController {
 	}
 	
 	private func loadItemCompletionHandler(data: NSSecureCoding?) {
-		let kMaxFileSize = 10 << 20
+		let kMaxFileSize = 128 << 20
 		
 //		guard let d = data as? Data else {
 //			return showErrorAndExitAsync(message: "无法将数据转换成 Data 类型。")
@@ -197,11 +197,27 @@ class ShareViewController: UIViewController {
 		
 		print("已复制到路径：\(dstURL)")
 		DispatchQueue.main.async {
-			self.setView(full: false)
-			self.sharedData.fn = self.completeRequest
-			self.sharedData.text = "请打开 Whisper 查看新消息"
-			self.sharedData.alertShowing2 = true
+			if self.openURL(URL(string: "whisper://refresh")!) {
+				self.completeRequest()
+			} else {
+				self.setView(full: false)
+				self.sharedData.fn = self.completeRequest
+				self.sharedData.text = "未能启动 Whisper，请手动打开 Whisper 查看新消息。"
+				self.sharedData.alertShowing2 = true
+			}
 		}
+	}
+	
+	// https://stackoverflow.com/a/44499222/3628322
+	@objc func openURL(_ url: URL) -> Bool {
+		var responder: UIResponder? = self
+		while responder != nil {
+			if let application = responder as? UIApplication {
+				return application.perform(#selector(openURL(_:)), with: url) != nil
+			}
+			responder = responder?.next
+		}
+		return false
 	}
 }
 

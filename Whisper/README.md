@@ -115,3 +115,16 @@ SwiftUI
 上架准备：
 
 * [App Icon Generator](https://appicon.co)
+
+## 07.11
+
+分享扩展：
+
+* [ios - Share Extension to open containing app - Stack Overflow](https://stackoverflow.com/a/44499222/3628322)
+  * 如何在 Share Extension 内打开主应用。
+* [application\(\_:open:options:\) | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application)
+* [How to add an AppDelegate to a SwiftUI app - a free SwiftUI by Example tutorial](https://www.hackingwithswift.com/quick-start/swiftui/how-to-add-an-appdelegate-to-a-swiftui-app)
+
+生命周期变化通知：
+
+* [How to be notified when your SwiftUI app moves to the background - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/how-to-be-notified-when-your-swiftui-app-moves-to-the-background)

@@ -76,12 +76,10 @@ struct FailedMessageRow: View {
 
 struct MessagesView: View {
 	@EnvironmentObject var globalStates: GlobalStates
+	@Environment(\.scenePhase) var scenePhase
 	
 	@State private var alertMessage = ""
 	@State private var showingAlert = false
-	
-	// 自动刷新收件箱的消息。
-	let refreshInboxTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 	
 	var body: some View {
 		NavigationView {
@@ -120,15 +118,21 @@ struct MessagesView: View {
 				})
 			}
 		}
-		.onReceive(refreshInboxTimer) { _ in
-			if let (failed, found) = try? globalStates.loadInbox() {
-				// 避免刷新
-				if found.count > 0 {
-					globalStates.messages.insert(contentsOf: found, at: 0)
+		.onChange(of: scenePhase) { phase in
+			if phase == .active {
+				DispatchQueue.global(qos: .default).async {
+					if let (failed, found) = try? globalStates.loadInbox() {
+						DispatchQueue.main.async {
+							// 避免刷新
+							if found.count > 0 {
+								globalStates.messages.insert(contentsOf: found, at: 0)
+							}
+							globalStates.updateFailedMessages(failed: failed)
+							print("刷新消息，找到 \(found.count) 条消息")
+							print("错误内容：\(failed)")
+						}
+					}
 				}
-				globalStates.updateFailedMessages(failed: failed)
-				print("刷新消息，找到 \(found.count) 条消息")
-				print("错误内容：\(failed)")
 			}
 		}
 		.alert(isPresented: $showingAlert) {

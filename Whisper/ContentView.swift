@@ -28,6 +28,7 @@ struct ContentView: View {
 				}
 		}
 		.onChange(of: scenePhase) { phase in
+			print("场景改变：", phase)
 			if phase == .inactive {
 				try! globalStates.saveMessages()
 				try! globalStates.saveContacts()
