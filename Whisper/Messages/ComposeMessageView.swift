@@ -42,14 +42,6 @@ struct ComposeMessageView: View {
 			return
 		}
 		
-		// TODO
-		if !imagesLoaded {
-			
-		}
-		if !videosLoaded {
-			
-		}
-		
 		do {
 			let recipients = globalStates.contacts.filter { contact in message.receipients.contains(contact.publicKey) }.map{PublicKey.fromString(s: $0.publicKey)!}
 			let file = File(fileHeader: kFileHeader, recipients: recipients, title: message.title, content: message.content, images: imageURLs, videos: videoURLs)
@@ -79,47 +71,50 @@ struct ComposeMessageView: View {
 		print("设置新联系人：", message.receipients)
 	}
 	
-	enum ContentKind: String, CaseIterable, Identifiable {
-		case 文本, 图片, 视频
-		var id: Self { self }
-	}
-	
-	private func showing(kind: ContentKind) -> Bool {
-		return selectedContentKind == kind
-	}
-	
-	@State private var selectedContentKind: ContentKind = .文本
-	
 	@FocusState private var titleFocused: Bool
+	@Environment(\.editMode) private var editMode
 	
 	var body: some View {
 		VStack {
-//			HStack {
-//				Text("标题：").bold()
-//				Spacer()
-//			}
-			TextField("标题", text: $message.title)
-				.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-				.overlay {
-					RoundedRectangle(cornerRadius: 4)
-						.stroke(lineWidth: 1)
-						.fill(.gray)
+			if editMode?.wrappedValue.isEditing ?? false {
+				TextField("标题", text: $message.title)
+					.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+					.overlay {
+						RoundedRectangle(cornerRadius: 4)
+							.stroke(lineWidth: 1)
+							.fill(.gray)
+					}
+					.padding(.bottom)
+					.focused($titleFocused)
+			} else {
+				HStack {
+					Text(message.title)
+						.bold()
+						.textSelection(.enabled)
+						.font(.title2)
+					Spacer()
 				}
-				.padding(.bottom)
-				.focused($titleFocused)
-			makeContactsView()
+			}
+			if editMode?.wrappedValue.isEditing ?? false {
+				makeContactsView()
+			}
 			makeContentView()
 		}
-		.padding()
-		.navigationBarTitle("编辑消息")
+		.padding([.leading, .bottom, .trailing])
+		.navigationBarTitle(editMode?.wrappedValue.isEditing ?? false ? "编辑消息" : "阅读消息")
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
-			Button(action: {
-				UIApplication.shared.endEditing()
-				shareButton()
-			}, label: {
-				Image(systemName: "square.and.arrow.up")
-			})
+			HStack {
+				Button(action: {
+					UIApplication.shared.endEditing()
+					shareButton()
+				}, label: {
+					Image(systemName: "square.and.arrow.up")
+				})
+				.opacity(editMode?.wrappedValue.isEditing ?? false ? 1 : 0)
+				.disabled(!imagesLoaded || !videosLoaded)
+				EditButton()
+			}
 		}
 		.alert(alertMessage, isPresented: $showingAlert) {
 			Button("OK", role: .cancel) { }
@@ -177,42 +172,52 @@ struct ComposeMessageView: View {
 	@State private var imagesLoaded = false
 	@State private var videosLoaded = false
 	@FocusState private var contentFocused: Bool
+	@State private var selectedContentKind: ContentKind = .文本
+	
+	enum ContentKind: String, CaseIterable, Identifiable {
+		case 文本, 图片, 视频
+		var id: Self { self }
+	}
+	private func showing(kind: ContentKind) -> Bool {
+		return selectedContentKind == kind
+	}
+	private func kindText(kind: ContentKind) -> String {
+		switch kind {
+		case .文本:
+			return "文本"
+		case .图片:
+			return "图片(\(imageURLs.count))"
+		case .视频:
+			return "视频(\(videoURLs.count))"
+		}
+	}
+	
 	private func makeContentView() -> some View {
 		Group {
 			Picker("ContentKind", selection: $selectedContentKind) {
 				ForEach(ContentKind.allCases) { contentKind in
-					Text(contentKind.rawValue.capitalized)
+					Text(kindText(kind:contentKind))
 				}
 			}
 			.pickerStyle(.segmented)
 			if showing(kind: .文本) {
-				TextEditor(text: $message.content)
-//					.overlay {
-//						RoundedRectangle(cornerRadius: 4)
-//							.stroke(lineWidth: 1)
-//							.fill(.gray)
-//					}
-//					.padding(.bottom)
-					.frame(maxHeight: 2000)
-					.focused($contentFocused)
-					.onAppear {
-						// contentFocused = true
+				if editMode?.wrappedValue.isEditing ?? false {
+					TextEditor(text: $message.content)
+						.frame(maxHeight: 2000)
+						.focused($contentFocused)
+				} else {
+					ScrollView() {
+						HStack {
+							Text(message.content)
+							Spacer()
+						}
 					}
+				}
 			} else if showing(kind: .图片) {
 				ImagePickerView(forPhotos: true, done: doneSelectMedia, onDelete: {url in onDeleteMedia(forPhoto: true, url: url) },  mediaURLs: $imageURLs)
 					.frame(minHeight: 100, maxHeight: 2000)
 					.onAppear {
 						titleFocused = false
-						guard !imagesLoaded else {
-							return
-						}
-						do {
-							imageURLs = try globalStates.loadMessageMedia(forImage: true, messageID: message.id)
-						} catch {
-							alertMessage = error.localizedDescription
-							showingAlert = true
-						}
-						imagesLoaded = true
 					}
 					.padding(.top)
 			} else if showing(kind: .视频) {
@@ -220,18 +225,38 @@ struct ComposeMessageView: View {
 					.frame(minHeight: 100, maxHeight: 2000)
 					.onAppear {
 						titleFocused = false
-						guard !videosLoaded else {
-							return
-						}
-						do {
-							videoURLs = try globalStates.loadMessageMedia(forImage: false, messageID: message.id)
-						} catch {
-							alertMessage = error.localizedDescription
-							showingAlert = true
-						}
-						videosLoaded = true
 					}
 					.padding(.top)
+			}
+		}
+		.onAppear {
+			// 预览时无效
+			guard let _ =  globalStates.privateKey else {
+				return
+			}
+			DispatchQueue.global(qos: .default).async {
+				do {
+					imageURLs = try globalStates.loadMessageMedia(forImage: true, messageID: message.id)
+					imagesLoaded = true
+					print("图片已加载")
+				} catch {
+					DispatchQueue.main.async {
+						alertMessage = error.localizedDescription
+						showingAlert = true
+					}
+				}
+			}
+			DispatchQueue.global(qos: .default).async {
+				do {
+					videoURLs = try globalStates.loadMessageMedia(forImage: false, messageID: message.id)
+					videosLoaded = true
+					print("视频已加载")
+				} catch {
+					DispatchQueue.main.async {
+						alertMessage = error.localizedDescription
+						showingAlert = true
+					}
+				}
 			}
 		}
 	}

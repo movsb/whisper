@@ -259,7 +259,7 @@ struct SwiftUIView: View {
 				}
 			Text("")
 				.alert(isPresented: $sharedData.alertOpenWhisper, content: {
-					Alert(title: Text("立即打开 Whisper 查看新消息？"), message: Text(""), primaryButton: .default(Text("是")) {
+					Alert(title: Text("立即打开 Whisper 阅读新消息？"), message: Text(""), primaryButton: .default(Text("是")) {
 						sharedData.alertOpenWhisper = false
 						if let fn = sharedData.alertOpenWhisperOKFn {
 							fn()

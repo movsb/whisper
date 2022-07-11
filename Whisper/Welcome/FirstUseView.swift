@@ -33,7 +33,7 @@ struct FirstUseView: View {
 				makeItemView(
 					icon: "square.and.arrow.up.circle",
 					title: "与您的朋友们分享",
-					content: "通过隔空投送（AirDrop）或者社交应用安全地分享给您的朋友，选择使用 Whisper 打开并查看。"
+					content: "通过隔空投送（AirDrop）或者社交应用安全地分享给您的朋友，选择使用 Whisper 打开并阅读。"
 				)
 			}
 		}

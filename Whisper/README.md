@@ -132,3 +132,4 @@ SwiftUI
 ## 07.12
 
 在分享扩展的 viewDidLoad 里面关闭弹窗：<https://stackoverflow.com/a/64124289/3628322>
+允许 Text 的文本选择：<https://stackoverflow.com/a/59667107/3628322>

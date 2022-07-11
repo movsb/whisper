@@ -35,10 +35,10 @@ class Message: Identifiable, Codable {
 	}
 	
 	static func example() -> Message {
-		return Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "")
+		return Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "内容\n内容")
 	}
 	static func exampleUnread() -> Message {
-		let m = Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "")
+		let m = Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "内容")
 		m.read = false
 		return m
 	}
