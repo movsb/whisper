@@ -21,7 +21,6 @@ class ShareViewController: UIViewController {
 	let container = UIHostingController(rootView: SwiftUIView(sharedData: SharedData()))
 	private var sharedData: SharedData = SharedData()
 	private var currentUserPublicKeyString = ""
-	private var viewSet = false
 	
 	private func cancelRequest() {
 		self.extensionContext!.cancelRequest(withError: ShareError.unspecified)
@@ -30,29 +29,21 @@ class ShareViewController: UIViewController {
 		self.extensionContext!.completeRequest(returningItems: nil, completionHandler: nil)
 	}
 	
-	private func setView(full: Bool) {
-		if viewSet {
-			return
-		}
+	// https://www.youtube.com/watch?v=z_9EOGDw5uk
+	private func setView() {
+		addChild(container)
+		view.addSubview(container.view)
+		container.didMove(toParent: self)
+		container.view!.backgroundColor = .clear
 		
-		// https://www.youtube.com/watch?v=z_9EOGDw5uk
-		self.addChild(self.container)
-		self.view.addSubview(self.container.view)
-		self.container.didMove(toParent: self)
-		
-		if full {
-			self.container.view.translatesAutoresizingMaskIntoConstraints = false
-			self.container.view.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-			self.container.view.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-			self.container.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-			self.container.view.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-		}
-		
-		viewSet = true
+		container.view.translatesAutoresizingMaskIntoConstraints = false
+		container.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		container.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+		container.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+		container.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
 	}
 	
 	private func showErrorAndExit(message: String) {
-		setView(full: false)
 		sharedData.fn = cancelRequest
 		sharedData.alertMessage = message
 		sharedData.alertShowing = true
@@ -65,13 +56,14 @@ class ShareViewController: UIViewController {
 	}
 	
 	private func initialize() {
-		sharedData = container.rootView.sharedData
 	}
 		
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		initialize()
+		sharedData = container.rootView.sharedData
+		
+		setView()
 		
 		guard let currentUserPublicKey = appGroupUserDefaults.string(forKey: "currentUserPublicKey") else {
 			return showErrorAndExit(message: "请先创建新用户或登录已有用户后再进行此操作。")
@@ -133,14 +125,9 @@ class ShareViewController: UIViewController {
 	private func loadItemCompletionHandler(data: NSSecureCoding?) {
 		let kMaxFileSize = 128 << 20
 		
-//		guard let d = data as? Data else {
-//			return showErrorAndExitAsync(message: "无法将数据转换成 Data 类型。")
-//		}
-
 		guard let srcURL = data as? URL else {
 			return showErrorAndExitAsync(message: "无法将数据转换成 URL 类型。")
 		}
-		//showErrorAndExit(message: "已转换成 URL 类型。")
 		guard let fileSize = try? srcURL.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
 			return showErrorAndExitAsync(message: "无法取得文件大小")
 		}
@@ -175,16 +162,16 @@ class ShareViewController: UIViewController {
 		
 		// 如果文件名存在，则提示覆盖
 		if FileManager.default.fileExists(atPath: dstURL.path) {
-			DispatchQueue.main.sync {
-				self.setView(full: false)
-				sharedData.alertOverwriteMessage = "\(dstURL.lastPathComponent)"
-				sharedData.alertOverWriteOKFn = { self.copy(srcURL: srcURL, dstURL: dstURL) }
-				sharedData.alertOverWriteCancelFn = { self.cancelRequest() }
-				sharedData.alertOverwrite = true
+			DispatchQueue.main.async {
+				self.sharedData.alertOverwriteMessage = "\(dstURL.lastPathComponent)"
+				self.sharedData.alertOverWriteOKFn = { self.copy(srcURL: srcURL, dstURL: dstURL) }
+				self.sharedData.alertOverWriteCancelFn = { self.cancelRequest() }
+				self.sharedData.alertOverwrite = true
 			}
 			return
 		}
 		
+		// 这里和覆盖时使用的不是同一个线程。行为似乎不一样（Share Extension 关不掉）。
 		self.copy(srcURL: srcURL, dstURL: dstURL)
 	}
 	
@@ -196,15 +183,22 @@ class ShareViewController: UIViewController {
 		}
 		
 		print("已复制到路径：\(dstURL)")
+//		DispatchQueue.main.async {
+//			self.sharedData.alertOpenWhisperOKFn = open
+//			self.sharedData.alertOpenWhisperCancelFn = close
+//			self.sharedData.alertOpenWhisper = true
+//		}
+		
 		DispatchQueue.main.async {
-			if self.openURL(URL(string: "whisper://refresh")!) {
-				self.completeRequest()
-			} else {
-				self.setView(full: false)
-				self.sharedData.fn = self.completeRequest
-				self.sharedData.text = "未能启动 Whisper，请手动打开 Whisper 查看新消息。"
-				self.sharedData.alertShowing2 = true
-			}
+			open()
+		}
+		
+		func open() {
+			let _ = openURL(URL(string: "whisper:refresh")!)
+			self.completeRequest()
+		}
+		func close() {
+			self.completeRequest()
 		}
 	}
 	
@@ -233,56 +227,60 @@ extension FileManager {
 }
 
 class SharedData: ObservableObject {
-	@Published var text: String = ""
-	@Published var alertTitle = ""
 	@Published var alertMessage = ""
 	@Published var alertShowing = false
-	@Published var alertShowing2 = false
 	@Published var fn: (() -> Void)?
+	
+	@Published var alertOpenWhisper = false
+	@Published var alertOpenWhisperCancelFn: (() -> Void)?
+	@Published var alertOpenWhisperOKFn: (() -> Void)?
 	
 	@Published var alertOverwrite = false
 	@Published var alertOverwriteMessage = ""
 	@Published var alertOverWriteCancelFn: (() -> Void)?
 	@Published var alertOverWriteOKFn: (() -> Void)?
-	
-	init() {
-		
-	}
 }
 
 struct SwiftUIView: View {
 	@ObservedObject var sharedData: SharedData
+//	private let fuck = "如果此窗口没有关闭，请下拉关闭。"
+	private let fuck = ""
 	
 	var body: some View {
 		VStack {
-			TextField("",text: $sharedData.text)
-				.alert(isPresented: $sharedData.alertShowing, content: {
-					Alert(title: Text(sharedData.text != "" ? sharedData.text : "错误"), message: Text(sharedData.alertMessage), dismissButton: .cancel {
+			Text(fuck)
+				.alert(Text(sharedData.alertMessage), isPresented: $sharedData.alertShowing) {
+					Button("OK") {
+						sharedData.alertShowing = false
 						if let fn = sharedData.fn {
 							fn()
 						}
-						sharedData.text = ""
-					})
-				})
-			Text("hidden")
-				.alert(isPresented: $sharedData.alertShowing2, content: {
-					Alert(title: Text(sharedData.text), message: Text(sharedData.alertMessage), dismissButton: .default(Text("OK")) {
-						if let fn = sharedData.fn {
+					}
+				}
+			Text("")
+				.alert(isPresented: $sharedData.alertOpenWhisper, content: {
+					Alert(title: Text("立即打开 Whisper 查看新消息？"), message: Text(""), primaryButton: .default(Text("是")) {
+						sharedData.alertOpenWhisper = false
+						if let fn = sharedData.alertOpenWhisperOKFn {
+							fn()
+						}
+					}, secondaryButton: .cancel(Text("否")) {
+						sharedData.alertOverwrite = false
+						if let fn = sharedData.alertOpenWhisperCancelFn {
 							fn()
 						}
 					})
 				})
-			Text("hidden")
-				.hidden()
+			Text("")
 				.alert(isPresented: $sharedData.alertOverwrite, content: {
 					Alert(title: Text("文件已经存在，是否覆盖？"), message: Text(sharedData.alertOverwriteMessage), primaryButton: .destructive(Text("覆盖")) {
+						sharedData.alertOverwrite = false
 						if let fn = sharedData.alertOverWriteOKFn {
-							sharedData.alertOverwrite = false
 							fn()
 						}
 					}, secondaryButton: .cancel {
+						sharedData.alertOverwrite = false
 						if let fn = sharedData.alertOverWriteCancelFn {
-							sharedData.alertOverwrite = false
 							fn()
 						}
 					})

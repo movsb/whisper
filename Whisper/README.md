@@ -128,3 +128,7 @@ SwiftUI
 生命周期变化通知：
 
 * [How to be notified when your SwiftUI app moves to the background - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/how-to-be-notified-when-your-swiftui-app-moves-to-the-background)
+
+## 07.12
+
+在分享扩展的 viewDidLoad 里面关闭弹窗：<https://stackoverflow.com/a/64124289/3628322>
