@@ -135,9 +135,16 @@ class ShareViewController: UIViewController {
 			return showErrorAndExitAsync(message: "文件大小超过限制：\(fileSize) > \(kMaxFileSize)")
 		}
 		// 判断文件格式是否正确
-		guard let data = try? Data(contentsOf: srcURL) else {
+		guard let fp = try? FileHandle(forReadingFrom: srcURL) else {
 			return showErrorAndExitAsync(message: "无法读取文件内容")
 		}
+		let bytesToRead = min(64, fileSize)
+		guard let data = try? fp.read(upToCount: bytesToRead) else {
+			try? fp.close()
+			return showErrorAndExitAsync(message: "无法读取文件内容")
+		}
+		try? fp.close()
+		
 		// TODO: 导不出来，直接写了。
 		if !data.starts(with: "Whipser/1.0\n".utf8) {
 			return showErrorAndExitAsync(message: "文件格式不正确。")
