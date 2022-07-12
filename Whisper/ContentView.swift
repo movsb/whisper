@@ -32,6 +32,7 @@ struct ContentView: View {
 			if phase == .inactive {
 				try! globalStates.saveMessages()
 				try! globalStates.saveContacts()
+				try! globalStates.saveSettings()
 			}
 		}
 		.popover(isPresented: $globalStates.firstUse) {

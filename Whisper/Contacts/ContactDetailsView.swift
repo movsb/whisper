@@ -30,17 +30,11 @@ struct ContactDetailsView: View {
 						Text("公钥")
 						Spacer()
 						Text(contact.publicKey)
-							.contextMenu(ContextMenu(menuItems: {
-								Button("复制", action: {
-									let s = contact.publicKey
-									UIPasteboard.general.string = s
-								})
-							}))
+							.textSelection(.enabled)
 							.lineLimit(1)
 					}
 				}
 			}
-			.listStyle(.grouped)
 		}
 		.navigationTitle("详情")
     }

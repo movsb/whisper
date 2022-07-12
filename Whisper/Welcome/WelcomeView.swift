@@ -23,14 +23,20 @@ struct WelcomeView: View {
 					.font(.largeTitle)
 					.bold()
 					.foregroundColor(.accentColor)
-				Button("创建新用户") {
+				Button("创建新帐号") {
 					newUser()
 				}
 				.padding()
-				Button("从私钥创建") {
+				Button("从私钥登录") {
 					showingAlertCreateFromPrivateKey = true
 				}
 				.padding()
+				if globalStates.lastUserFailed {
+					Button("上次登录帐号") {
+						loadLastUser(globalStates)
+					}
+					.padding()
+				}
 			}
 			.alert(isPresented: $showingAlert) {
 				Alert(title: Text("错误"), message: Text(alertMessage))
@@ -54,7 +60,7 @@ struct WelcomeView: View {
 			alertMessage = error.localizedDescription
 			showingAlert = true
 			globalStates.loggedin = false
-			globalStates.privateKey = nil
+//			globalStates.privateKey = nil
 			return
 		}
 		
@@ -84,16 +90,30 @@ struct WelcomeView: View {
 		do {
 			try globalStates.loadMessages()
 			try globalStates.loadContacts()
+			try globalStates.loadSettings()
 		} catch {
 			alertMessage = error.localizedDescription
 			showingAlert = true
+			globalStates.signOut()
 			return
 		}
 		
 		showingAlertCreateFromPrivateKey = false
 		
-		globalStates.setLastUser()
-		globalStates.loggedin = true
+		func welcomeBack() {
+			globalStates.setLastUser()
+			globalStates.loggedin = true
+		}
+		
+		if globalStates.userSettings.enableFaceID {
+			Me.authenticate(succeeded: {
+				DispatchQueue.main.async {
+					welcomeBack()
+				}
+			}, failed: {})
+		} else {
+			welcomeBack()
+		}
 	}
 }
 

@@ -16,19 +16,35 @@ struct WhisperApp: App {
 			WelcomeView()
 				.environmentObject(globalStates)
 				.onAppear {
-					loadLastUser()
+					loadLastUser(globalStates)
 				}
 		}
 	}
 	
-	private func loadLastUser() {
-		guard let publicKey = GlobalStates.lastUser() else {
-			return
-		}
-		let privateKey = GlobalStates.loadUserPrivteKey(publicKey: publicKey)
-		globalStates.privateKey = privateKey
-		try! globalStates.loadMessages()
-		try! globalStates.loadContacts()
+}
+
+func loadLastUser(_ globalStates: GlobalStates) {
+	guard let publicKey = GlobalStates.lastUser() else {
+		return
+	}
+	let privateKey = GlobalStates.loadUserPrivteKey(publicKey: publicKey)
+	globalStates.privateKey = privateKey
+	try! globalStates.loadMessages()
+	try! globalStates.loadContacts()
+	try! globalStates.loadSettings()
+	
+	if globalStates.userSettings.enableFaceID {
+		Me.authenticate(succeeded: {
+			DispatchQueue.main.async {
+				globalStates.loggedin = true
+				globalStates.lastUserFailed = false
+			}
+		}, failed: {
+			DispatchQueue.main.async {
+				globalStates.lastUserFailed = true
+			}
+		})
+	} else {
 		globalStates.loggedin = true
 	}
 }

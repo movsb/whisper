@@ -133,3 +133,12 @@ SwiftUI
 
 在分享扩展的 viewDidLoad 里面关闭弹窗：<https://stackoverflow.com/a/64124289/3628322>
 允许 Text 的文本选择：<https://stackoverflow.com/a/59667107/3628322>
+
+## 07.13
+
+关于状态，仍然不懂：
+
+* [@StateObject vs. @ObservedObject: The differences explained - SwiftLee](https://www.avanderlee.com/swiftui/stateobject-observedobject-differences/)
+* [Why @State only works with structs - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/why-state-only-works-with-structs)
+* [Managing Model Data in Your App | Apple Developer Documentation](https://developer.apple.com/documentation/swiftui/managing-model-data-in-your-app)
+

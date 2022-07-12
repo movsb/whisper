@@ -14,9 +14,32 @@ var appGroupUserDefaults = UserDefaults.init(suiteName: "group.com.twofei.whispe
 class GlobalStates: ObservableObject {
 	@Published var firstUse = false
 	@Published var loggedin = false
+	// 如果最后一次登录的用户人脸识别失败， 可再次重试。
+	@Published var lastUserFailed = false
 	@Published var messages: [Message] = []
 	@Published var contacts: [Contact] = []
 	@Published var failedMessages: [FailedMessage] = []
+	@Published var userSettings = UserSettings()
+	
+	class UserSettings: ObservableObject, Codable {
+		@Published var enableFaceID = false
+		
+		enum CodingKeys: CodingKey {
+			case enableFaceID
+		}
+		
+		init() {}
+		
+		required init(from decoder: Decoder) throws {
+			let container = try decoder.container(keyedBy: CodingKeys.self)
+			enableFaceID = try container.decode(Bool.self, forKey: .enableFaceID)
+		}
+		
+		func encode(to encoder: Encoder) throws {
+			var container = encoder.container(keyedBy: CodingKeys.self)
+			try container.encode(enableFaceID, forKey: .enableFaceID)
+		}
+	}
 	
 	init() {}
 	init(privateKey: PrivateKey) {
@@ -128,11 +151,21 @@ class GlobalStates: ObservableObject {
 			contacts = []
 		}
 	}
+	func loadSettings() throws {
+		do {
+			userSettings = try loadUserJson(name: "settings.json", demo: UserSettings())
+		} catch CocoaError.fileNoSuchFile {
+			userSettings = UserSettings()
+		}
+	}
 	func saveContacts() throws {
 		try saveUserJson(name: "contacts.json", data: contacts)
 	}
 	func saveMessages() throws {
 		try saveUserJson(name: "messages.json", data: messages)
+	}
+	func saveSettings() throws {
+		try saveUserJson(name: "settings.json", data: userSettings)
 	}
 	
 	// 加载共享来的消息数据
@@ -258,5 +291,14 @@ class GlobalStates: ObservableObject {
 		if FileManager.default.fileExists(atPath: dir.path) {
 			try FileManager.default.removeItem(at: dir)
 		}
+	}
+	
+	// 清理登录状态
+	func signOut() {
+		removeLastUser()
+		messages = []
+		contacts = []
+		failedMessages = []
+		loggedin = false
 	}
 }
