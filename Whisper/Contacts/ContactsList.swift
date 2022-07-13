@@ -17,7 +17,7 @@ struct ContactsList: View {
 		NavigationView {
 			Group {
 				if globalStates.contacts.isEmpty {
-					Text("没有联系人")
+					Text("没有设备")
 						.foregroundColor(.gray)
 				} else {
 					List {
@@ -32,7 +32,7 @@ struct ContactsList: View {
 					}
 				}
 			}
-			.navigationBarTitle("联系人")
+			.navigationBarTitle("设备")
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				Button(action: {

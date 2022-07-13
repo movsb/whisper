@@ -32,12 +32,12 @@ struct ComposeMessageView: View {
 	
 	func shareButton() {
 		if message.receipients.count <= 0 {
-			alertMessage = "请选择接收人"
+			alertMessage = "请选择接收设备"
 			showingAlert = true
 			return
 		}
 		if message.receipients.count > 5 {
-			alertMessage = "不能选择超过 5 个联系人"
+			alertMessage = "不能选择超过 5 个设备"
 			showingAlert = true
 			return
 		}
@@ -68,7 +68,7 @@ struct ComposeMessageView: View {
 			messageContacts.append(c)
 			message.receipients.append(c.publicKey)
 		}
-		print("设置新联系人：", message.receipients)
+		print("设置新设备：", message.receipients)
 	}
 	
 	@FocusState private var titleFocused: Bool
@@ -133,7 +133,7 @@ struct ComposeMessageView: View {
 	private func makeContactsView() -> some View {
 		Group {
 			HStack {
-				Text("接收人：").bold()
+				Text("接收设备：").bold()
 				Spacer()
 			}
 			HStack {

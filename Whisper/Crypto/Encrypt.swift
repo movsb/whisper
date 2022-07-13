@@ -70,7 +70,7 @@ struct File {
 		data.append(sender.publicKey.rawRepresentation)
 		
 		if recipients.count <= 0 {
-			throw "接收人不可为空"
+			throw "接收设备不可为空"
 		}
 		data.append(contentsOf: [UInt8](arrayLiteral: UInt8(self.recipients.count)))
 		for p in self.recipients {

@@ -43,13 +43,13 @@ struct NewContactView: View {
 		
 		// 重复判断
 		if let _ = contacts.first(where: {$0.name == trimmedName}) {
-			alertMessage = "已经存在同名的联系人"
+			alertMessage = "已经存在同名的设备"
 			showingAlert = true
 			nameFocused = true
 			return
 		}
 		if let c = contacts.first(where: {$0.publicKey == pubKeyStr}) {
-			alertMessage = "已经存在相同公钥的联系人（名字：\(c.name)）"
+			alertMessage = "已经存在相同公钥的设备（名字：\(c.name)）"
 			showingAlert = true
 			pubKeyFocused = true
 			return
@@ -67,7 +67,7 @@ struct NewContactView: View {
 					showCreate = false
 				}
 				Spacer()
-				Text("添加联系人")
+				Text("添加设备")
 					.bold()
 				Spacer()
 				Button("完成") {

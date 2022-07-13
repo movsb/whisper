@@ -20,7 +20,7 @@ struct ContentView: View {
 				}
 			ContactsView()
 				.tabItem {
-					Label("联系人", systemImage: "person.crop.circle")
+					Label("设备", systemImage: "person.crop.circle")
 				}
 			SettingsView()
 				.tabItem {
@@ -36,8 +36,7 @@ struct ContentView: View {
 			}
 		}
 		.popover(isPresented: $globalStates.firstUse) {
-			FirstUseView()
-				.padding(EdgeInsets(top: 50, leading: 50, bottom: 50, trailing: 50))
+			FirstUseView(show: $globalStates.firstUse)
 		}
 	}
 }

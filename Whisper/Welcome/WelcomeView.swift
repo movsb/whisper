@@ -80,7 +80,7 @@ struct WelcomeView: View {
 		}
 			
 		if !GlobalStates.userDirExists(publicKey: privateKey.publicKey) {
-			alertMessage = "不存在此用户"
+			alertMessage = "不存在此帐号"
 			showingAlert = true
 			return
 		}

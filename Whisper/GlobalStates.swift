@@ -52,9 +52,9 @@ class GlobalStates: ObservableObject {
 	// 以公钥命名的用户目录，登录后立即调用。
 	func createUserDir() throws {
 		guard let _ = privateKey else {
-			fatalError("未登录时没有用户目录")
+			throw "未登录时没有帐号目录"
 		}
-		let user = userDir()
+		let user = try userDir()
 		try FileManager.default.createDirectory(at: user, withIntermediateDirectories: true)
 	}
 	
@@ -62,9 +62,9 @@ class GlobalStates: ObservableObject {
 		try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
 	}
 	
-	func userDir() -> URL {
+	func userDir() throws -> URL {
 		guard let _ = privateKey else {
-			fatalError("未登录时没有用户目录")
+			throw "未登录时没有帐号目录"
 		}
 		return GlobalStates.userDir(publicKey: privateKey!.publicKey)
 	}
@@ -102,12 +102,12 @@ class GlobalStates: ObservableObject {
 	
 	func saveUserJson(name: String, data: Encodable) throws {
 		let data = try JSONEncoder().encode(data)
-		let outfile = self.userDir().appendingPathComponent(name)
+		let outfile = try self.userDir().appendingPathComponent(name)
 		try data.write(to: outfile)
 	}
 	
 	func loadUserJson<T>(name: String, demo: T) throws -> T where T: Decodable {
-		let fileURL = self.userDir().appendingPathComponent(name)
+		let fileURL = try self.userDir().appendingPathComponent(name)
 		let file = try FileHandle(forReadingFrom: fileURL)
 		return try JSONDecoder().decode(T.self, from: file.availableData)
 	}
@@ -234,7 +234,7 @@ class GlobalStates: ObservableObject {
 	
 	// 消息附件管理
 	func saveMessageImage(messageID: UUID, srcURL: URL) throws -> URL {
-		let imagesDir = userDir().appendingPathComponent("messages")
+		let imagesDir = try userDir().appendingPathComponent("messages")
 			.appendingPathComponent(messageID.uuidString)
 			.appendingPathComponent("images")
 		try GlobalStates.createDir(url: imagesDir)
@@ -247,7 +247,7 @@ class GlobalStates: ObservableObject {
 		return dstURL
 	}
 	func saveMessageImage(messageID: UUID, uiImage: UIImage) throws -> URL {
-		let imagesDir = userDir().appendingPathComponent("messages")
+		let imagesDir = try userDir().appendingPathComponent("messages")
 			.appendingPathComponent(messageID.uuidString)
 			.appendingPathComponent("images")
 		try GlobalStates.createDir(url: imagesDir)
@@ -261,7 +261,7 @@ class GlobalStates: ObservableObject {
 		return dstURL
 	}
 	func saveMessageVideo(messageID: UUID, srcURL: URL) throws -> URL {
-		let imagesDir = userDir().appendingPathComponent("messages")
+		let imagesDir = try userDir().appendingPathComponent("messages")
 			.appendingPathComponent(messageID.uuidString)
 			.appendingPathComponent("videos")
 		try GlobalStates.createDir(url: imagesDir)
@@ -274,7 +274,7 @@ class GlobalStates: ObservableObject {
 		return dstURL
 	}
 	func loadMessageMedia(forImage: Bool, messageID: UUID) throws -> [URL] {
-		let dir = userDir().appendingPathComponent("messages")
+		let dir = try userDir().appendingPathComponent("messages")
 			.appendingPathComponent(messageID.uuidString)
 			.appendingPathComponent(forImage ? "images" : "videos")
 		if !FileManager.default.fileExists(atPath: dir.path) {
@@ -287,7 +287,7 @@ class GlobalStates: ObservableObject {
 	}
 	// 删除消息目录
 	func removeMessageDir(messageID: UUID) throws {
-		let dir = userDir().appendingPathComponent("messages").appendingPathComponent(messageID.uuidString)
+		let dir = try userDir().appendingPathComponent("messages").appendingPathComponent(messageID.uuidString)
 		if FileManager.default.fileExists(atPath: dir.path) {
 			try FileManager.default.removeItem(at: dir)
 		}

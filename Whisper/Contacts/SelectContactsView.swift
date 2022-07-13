@@ -83,7 +83,7 @@ struct SelectContactsView: View {
 					showPopover = false
 				}
 				Spacer()
-				Text("选择接收人")
+				Text("选择接收设备")
 					.font(.headline)
 					.bold()
 				Spacer()
@@ -96,7 +96,7 @@ struct SelectContactsView: View {
 			VStack {
 				if distinctContacts.isEmpty {
 					Spacer()
-					Text("没有联系人")
+					Text("没有设备")
 						.foregroundColor(.gray)
 					Spacer()
 				} else {

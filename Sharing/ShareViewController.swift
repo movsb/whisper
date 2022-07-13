@@ -66,7 +66,7 @@ class ShareViewController: UIViewController {
 		setView()
 		
 		guard let currentUserPublicKey = appGroupUserDefaults.string(forKey: "currentUserPublicKey") else {
-			return showErrorAndExit(message: "请先创建新用户或登录已有用户后再进行此操作。")
+			return showErrorAndExit(message: "请先创建新帐号或登录已有帐号后再进行此操作。")
 		}
 		currentUserPublicKeyString = currentUserPublicKey
 		
