@@ -24,11 +24,10 @@ struct ComposeMessageView: View {
 	@EnvironmentObject var globalStates: GlobalStates
 	
 	@Binding var message: Message
+	@State var onClose: (()->Void)? = nil
 	
 	@State private var showingAlert = false
 	@State private var alertMessage = ""
-	
-	@State private var image = ""
 	
 	func shareButton() {
 		if message.receipients.count <= 0 {
@@ -84,7 +83,7 @@ struct ComposeMessageView: View {
 							.stroke(lineWidth: 1)
 							.fill(.gray)
 					}
-					.padding(.bottom)
+					.padding(.vertical)
 					.focused($titleFocused)
 			} else {
 				HStack {
@@ -104,6 +103,15 @@ struct ComposeMessageView: View {
 		.navigationBarTitle(editMode?.wrappedValue.isEditing ?? false ? "编辑消息" : "阅读消息")
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
+			ToolbarItemGroup(placement: ToolbarItemPlacement.navigationBarLeading) {
+				if let onClose {
+					Button("Close") {
+						onClose()
+					}
+				}
+			}
+		}
+		.toolbar {
 			HStack {
 				Button(action: {
 					UIApplication.shared.endEditing()
@@ -119,13 +127,13 @@ struct ComposeMessageView: View {
 		.alert(alertMessage, isPresented: $showingAlert) {
 			Button("OK", role: .cancel) { }
 		}
-//		.onTapGesture {
-//			UIApplication.shared.endEditing()
-//		}
 		.onAppear {
 			message.read = true
 			print("标识消息为已读状态", message.read)
 			messageContacts = globalStates.contacts.filter{message.receipients.contains($0.publicKey)}
+			if onClose != nil {
+				titleFocused = true
+			}
 		}
 		Spacer()
 	}
@@ -302,13 +310,17 @@ struct ComposeMessageView_Previews: PreviewProvider {
 	@State static var message = Message.example()
 	@State static var contacts = [Contact.example()]
 	@StateObject static var globalStates = GlobalStates()
-    static var previews: some View {
-		ComposeMessageView(
-			message: $message,
-			messageContacts: contacts.filter{
-				message.receipients.contains($0.publicKey)
-			}
-		)
+	@State static var editMode: EditMode = .inactive
+	static var previews: some View {
+		NavigationView {
+			ComposeMessageView(
+				message: $message,
+				messageContacts: contacts.filter{
+					message.receipients.contains($0.publicKey)
+				}
+			)
+			.environment(\.editMode, $editMode)
+		}
 		.environmentObject(globalStates)
-    }
+	}
 }

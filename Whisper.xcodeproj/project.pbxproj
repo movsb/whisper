@@ -86,6 +86,7 @@
 		2B6C8CA3286DF0DF00A1CB8F /* Encrypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encrypt.swift; sourceTree = "<group>"; };
 		2B6C8CB2286E182800A1CB8F /* WhisperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhisperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B6C8CB4286E182800A1CB8F /* WhisperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperTests.swift; sourceTree = "<group>"; };
+		2B8B5DD5287F1D6D00592709 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		2B9830E42868BADB000B26DE /* Curve25519.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Curve25519.swift; sourceTree = "<group>"; };
 		2BA6D4AA28771BA300683FFF /* FilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesView.swift; sourceTree = "<group>"; };
 		2BA6D4AC28773A6700683FFF /* FilesPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesPicker.swift; sourceTree = "<group>"; };
@@ -232,6 +233,7 @@
 		2BEC9340286869AA00B0BCCF = {
 			isa = PBXGroup;
 			children = (
+				2B8B5DD5287F1D6D00592709 /* TODO.md */,
 				2B6C8CB3286E182800A1CB8F /* WhisperTests */,
 				2B14447C286F523D00990936 /* Sharing */,
 				2BEC934A286869AA00B0BCCF /* Products */,

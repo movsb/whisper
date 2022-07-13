@@ -27,6 +27,18 @@ class Message: Identifiable, Codable {
 	var content: String
 	var read: Bool = true
 	
+	func reset() {
+		id = UUID()
+		title = ""
+		content = ""
+		receipients = []
+		read = false
+	}
+	
+	convenience init() {
+		self.init(title: "", receipients: [], content: "")
+	}
+	
 	init(id: UUID = UUID(), title: String, receipients: [String], content: String) {
 		self.id = id
 		self.title = title
@@ -81,6 +93,10 @@ struct MessagesView: View {
 	@State private var alertMessage = ""
 	@State private var showingAlert = false
 	
+	// 点击加号添加新消息时使用的。
+	@State private var newMessage = Message()
+	@State private var showingNewMessage = false
+	
 	var body: some View {
 		NavigationView {
 			Group {
@@ -110,12 +126,13 @@ struct MessagesView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				Button(action: {
-					let message = Message(title: "新消息", receipients: [], content: "")
-					message.read = false
-					globalStates.messages.insert(message, at: 0)
+					showingNewMessage = true
 				}, label: {
 					Image(systemName: "plus")
 				})
+				.fullScreenCover(isPresented: $showingNewMessage) {
+					ComposeNewMessageView(message: $newMessage, onClose: closeNewMessage)
+				}
 			}
 		}
 		.onChange(of: scenePhase) { phase in
@@ -138,6 +155,19 @@ struct MessagesView: View {
 		.alert(isPresented: $showingAlert) {
 			Alert(title: Text("错误"), message: Text(alertMessage))
 		}
+	}
+	
+	// TODO 提示是否需要保存。
+	private func closeNewMessage() {
+		showingNewMessage = false
+		let m = Message(
+			id: newMessage.id,
+			title: newMessage.title,
+			receipients: newMessage.receipients,
+			content: newMessage.content
+		)
+		globalStates.messages.insert(m, at: 0)
+		newMessage.reset()
 	}
 	
 	private func delete(at offsets: IndexSet) {
@@ -174,4 +204,19 @@ struct MessagesView_Previews: PreviewProvider {
 				globalStates.failedMessages.append(FailedMessage(name: "name2", reason: "失败"))
 			}
     }
+}
+
+// 奇怪为什么需要自己定义 editMode？
+struct ComposeNewMessageView: View {
+	@State var editMode: EditMode = .active
+	@Binding var message: Message
+	
+	let onClose: (()->Void)?
+	
+	var body: some View {
+		NavigationView {
+			ComposeMessageView(message: $message, onClose: onClose, messageContacts: [])
+				.environment(\.editMode, $editMode)
+		}
+	}
 }
