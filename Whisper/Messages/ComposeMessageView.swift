@@ -75,14 +75,11 @@ struct ComposeMessageView: View {
 	
 	var body: some View {
 		VStack {
-			if editMode?.wrappedValue.isEditing ?? false {
+			if isEditing() {
 				TextField("标题", text: $message.title)
-					.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-					.overlay {
-						RoundedRectangle(cornerRadius: 4)
-							.stroke(lineWidth: 1)
-							.fill(.gray)
-					}
+					.padding(8)
+					.background(Color.gray.opacity(0.1))
+					.cornerRadius(8)
 					.padding(.vertical)
 					.focused($titleFocused)
 			} else {
@@ -93,14 +90,18 @@ struct ComposeMessageView: View {
 						.font(.title2)
 					Spacer()
 				}
+				.onAppear() {
+					// 刚进入或者退出编辑模式
+					initSelect()
+				}
 			}
-			if editMode?.wrappedValue.isEditing ?? false {
+			if isEditing() {
 				makeContactsView()
 			}
 			makeContentView()
 		}
 		.padding([.leading, .bottom, .trailing])
-		.navigationBarTitle(editMode?.wrappedValue.isEditing ?? false ? "编辑消息" : "阅读消息")
+		.navigationBarTitle(isEditing() ? "编辑消息" : "阅读消息")
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
 			ToolbarItemGroup(placement: ToolbarItemPlacement.navigationBarLeading) {
@@ -119,7 +120,7 @@ struct ComposeMessageView: View {
 				}, label: {
 					Image(systemName: "square.and.arrow.up")
 				})
-				.opacity(editMode?.wrappedValue.isEditing ?? false ? 1 : 0)
+				.opacity(isEditing() ? 1 : 0)
 				.disabled(!imagesLoaded || !videosLoaded)
 				EditButton()
 			}
@@ -133,6 +134,38 @@ struct ComposeMessageView: View {
 			messageContacts = globalStates.contacts.filter{message.receipients.contains($0.publicKey)}
 			if onClose != nil {
 				titleFocused = true
+			}			// 预览时无效
+			if let _ =  globalStates.privateKey {
+				DispatchQueue.global(qos: .default).async {
+					do {
+						imageURLs = try globalStates.loadMessageMedia(forImage: true, messageID: message.id)
+						DispatchQueue.main.async {
+							imagesLoaded = true
+							initSelect()
+						}
+						print("图片已加载")
+					} catch {
+						DispatchQueue.main.async {
+							alertMessage = error.localizedDescription
+							showingAlert = true
+						}
+					}
+				}
+				DispatchQueue.global(qos: .default).async {
+					do {
+						videoURLs = try globalStates.loadMessageMedia(forImage: false, messageID: message.id)
+						DispatchQueue.main.async {
+							videosLoaded = true
+							initSelect()
+						}
+						print("视频已加载")
+					} catch {
+						DispatchQueue.main.async {
+							alertMessage = error.localizedDescription
+							showingAlert = true
+						}
+					}
+				}
 			}
 		}
 		Spacer()
@@ -182,12 +215,39 @@ struct ComposeMessageView: View {
 	@FocusState private var contentFocused: Bool
 	@State private var selectedContentKind: ContentKind = .文本
 	
+	private func initSelect() {
+		guard imagesLoaded && videosLoaded else {
+			return
+		}
+		
+		if showKind(kind: selectedContentKind) {
+			print("当前选中项有数据，无需切换选项")
+			return
+		}
+		
+		if showKind(kind: .文本) {
+			selectedContentKind = .文本
+			print("初始化为文本")
+			return
+		}
+		if showKind(kind: .图片) {
+			selectedContentKind = .图片
+			print("初始化为图片")
+			return
+		}
+		if showKind(kind: .视频) {
+			selectedContentKind = .视频
+			print("初始化为视频")
+			return
+		}
+		print("啥也不初始化显示")
+	}
 	enum ContentKind: String, CaseIterable, Identifiable {
 		case 文本, 图片, 视频
 		var id: Self { self }
 	}
 	private func showing(kind: ContentKind) -> Bool {
-		return selectedContentKind == kind
+		return selectedContentKind == kind && showKind(kind: kind)
 	}
 	private func kindText(kind: ContentKind) -> String {
 		switch kind {
@@ -199,19 +259,47 @@ struct ComposeMessageView: View {
 			return "视频(\(videoURLs.count))"
 		}
 	}
+	private func showKind(kind: ContentKind) -> Bool {
+		switch kind {
+		case .文本:
+			return !message.content.isEmpty || isEditing()
+		case .图片:
+			return imageURLs.count > 0 || isEditing()
+		case .视频:
+			return videoURLs.count > 0 || isEditing()
+		}
+	}
+	private func shouldShowPicker() -> Bool {
+		var n = showKind(kind: .文本) ? 1 : 0
+		n += showKind(kind: .图片) ? 1 : 0
+		n += showKind(kind: .视频) ? 1 : 0
+		return n > 1
+	}
+	
+	private func isEditing() -> Bool {
+		return editMode?.wrappedValue.isEditing ?? false
+	}
 	
 	private func makeContentView() -> some View {
 		Group {
-			Picker("ContentKind", selection: $selectedContentKind) {
-				ForEach(ContentKind.allCases) { contentKind in
-					Text(kindText(kind:contentKind))
+			if shouldShowPicker() {
+				Picker("ContentKind", selection: $selectedContentKind) {
+					ForEach(ContentKind.allCases) { contentKind in
+						if showKind(kind: contentKind) {
+							Text(kindText(kind:contentKind))
+						}
+					}
 				}
+				.pickerStyle(.segmented)
 			}
-			.pickerStyle(.segmented)
 			if showing(kind: .文本) {
-				if editMode?.wrappedValue.isEditing ?? false {
+				if isEditing() {
 					TextEditor(text: $message.content)
+						.padding(6)
 						.frame(maxHeight: 2000)
+						.background(Color.gray.opacity(0.1))
+						.cornerRadius(8)
+						.padding(.vertical)
 						.focused($contentFocused)
 				} else {
 					ScrollView() {
@@ -235,36 +323,6 @@ struct ComposeMessageView: View {
 						titleFocused = false
 					}
 					.padding(.top)
-			}
-		}
-		.onAppear {
-			// 预览时无效
-			guard let _ =  globalStates.privateKey else {
-				return
-			}
-			DispatchQueue.global(qos: .default).async {
-				do {
-					imageURLs = try globalStates.loadMessageMedia(forImage: true, messageID: message.id)
-					imagesLoaded = true
-					print("图片已加载")
-				} catch {
-					DispatchQueue.main.async {
-						alertMessage = error.localizedDescription
-						showingAlert = true
-					}
-				}
-			}
-			DispatchQueue.global(qos: .default).async {
-				do {
-					videoURLs = try globalStates.loadMessageMedia(forImage: false, messageID: message.id)
-					videosLoaded = true
-					print("视频已加载")
-				} catch {
-					DispatchQueue.main.async {
-						alertMessage = error.localizedDescription
-						showingAlert = true
-					}
-				}
 			}
 		}
 	}
@@ -310,7 +368,7 @@ struct ComposeMessageView_Previews: PreviewProvider {
 	@State static var message = Message.example()
 	@State static var contacts = [Contact.example()]
 	@StateObject static var globalStates = GlobalStates()
-	@State static var editMode: EditMode = .inactive
+	@State static var editMode: EditMode = .active
 	static var previews: some View {
 		NavigationView {
 			ComposeMessageView(
@@ -320,6 +378,9 @@ struct ComposeMessageView_Previews: PreviewProvider {
 				}
 			)
 			.environment(\.editMode, $editMode)
+		}
+		.onAppear {
+			UITextView.appearance().backgroundColor = .clear
 		}
 		.environmentObject(globalStates)
 	}

@@ -16,6 +16,7 @@ struct WhisperApp: App {
 			WelcomeView()
 				.environmentObject(globalStates)
 				.onAppear {
+					UITextView.appearance().backgroundColor = .clear
 					loadLastUser(globalStates)
 				}
 		}

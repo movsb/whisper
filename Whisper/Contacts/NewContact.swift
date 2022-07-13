@@ -95,12 +95,9 @@ struct NewContactView: View {
 			HStack {
 				Image(systemName: "person").frame(width: 30).aspectRatio(contentMode: .fit)
 				TextField("名字", text: $name)
-					.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-					.overlay {
-						RoundedRectangle(cornerRadius: 4)
-							.stroke(lineWidth: 1)
-							.fill(.gray)
-					}
+					.padding(8)
+					.background(Color.gray.opacity(0.1))
+					.cornerRadius(8)
 					.padding(.vertical)
 					.focused($nameFocused)
 					.onSubmit {
@@ -110,12 +107,9 @@ struct NewContactView: View {
 			HStack {
 				Image(systemName: "key").frame(width: 30).aspectRatio(contentMode: .fit)
 				TextField("公钥", text: $pubKeyStr)
-					.padding(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-					.overlay {
-						RoundedRectangle(cornerRadius: 4)
-							.stroke(lineWidth: 1)
-							.fill(.gray)
-					}
+					.padding(8)
+					.background(Color.gray.opacity(0.1))
+					.cornerRadius(8)
 					.focused($pubKeyFocused)
 					.onSubmit {
 						onSubmit()

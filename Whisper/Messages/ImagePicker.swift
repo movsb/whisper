@@ -19,6 +19,8 @@ struct ImageItemView: View {
 	@State private var playingVideo = false
 	@State private var previewingImage = false
 	
+	@Environment(\.editMode) private var editMode
+	
 	// @GestureState var press = false
 	private var onDelete: () -> Void
 	
@@ -90,9 +92,11 @@ struct ImageItemView: View {
 			}
 		}
 		.contextMenu(ContextMenu(menuItems: {
-			Button("删除", action: {
-				onDelete()
-			})
+			if editMode?.wrappedValue.isEditing ?? false {
+				Button("删除", action: {
+					onDelete()
+				})
+			}
 		}))
 //		.gesture(LongPressGesture(minimumDuration: 0.5)
 //			.updating($press) { currentState, gestureState, transaction in gestureState = currentState }
@@ -121,6 +125,7 @@ struct ImageItemView: View {
 struct ImagePickerView: View {
 	@State private var showSheet = false
 	@State private var what = ImagePicker.What.selectPhoto
+	@Environment(\.editMode) private var editMode
 	
 	var forPhotos: Bool = true
 	var done: (_ isPhoto: Bool, _ url: URL?, _ uiImage: UIImage?) -> Void
@@ -160,30 +165,32 @@ struct ImagePickerView: View {
 					.padding(EdgeInsets(top: 0, leading: nSpacing, bottom: 0, trailing: nSpacing))
 				}
 			}
-			HStack {
-				Button(action: {
-					self.what = forPhotos ? .selectPhoto : .selectVideo
-					showSheet = true
-				}, label: {
-					Image(systemName: "photo")
-						.resizable()
-						.aspectRatio(contentMode: .fit)
-						.frame(width: 30)
-				})
-				Spacer().frame(width: 30)
-				Button(action: {
-					self.what = forPhotos ? .takePhoto : .captureVideo
-					showSheet = true
-				}, label: {
-					Image(systemName: forPhotos ? "camera" : "video")
-						.resizable()
-						.aspectRatio(contentMode: .fit)
-						.frame(width: 30)
-				})
-			}
-			.fullScreenCover(isPresented: $showSheet) {
-				ImagePicker(what: $what, done: myDone)
-					.ignoresSafeArea()
+			if editMode?.wrappedValue.isEditing ?? false {
+				HStack {
+					Button(action: {
+						self.what = forPhotos ? .selectPhoto : .selectVideo
+						showSheet = true
+					}, label: {
+						Image(systemName: "photo")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 30)
+					})
+					Spacer().frame(width: 30)
+					Button(action: {
+						self.what = forPhotos ? .takePhoto : .captureVideo
+						showSheet = true
+					}, label: {
+						Image(systemName: forPhotos ? "camera" : "video")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 30)
+					})
+				}
+				.fullScreenCover(isPresented: $showSheet) {
+					ImagePicker(what: $what, done: myDone)
+						.ignoresSafeArea()
+				}
 			}
 		}
 	}
