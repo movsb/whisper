@@ -212,6 +212,16 @@ class GlobalStates: ObservableObject {
 		
 		return (failed, messages)
 	}
+	// 从 AirDrop 来的文件在 Documents/Inbox 目录，没区分用户。
+	// 简单做法：拷贝到 whispers 目录，然后 reload。
+	func copyFromInbox(url: URL) throws {
+		let usersDirURL = appGroupURL.appendingPathComponent("users")
+		let userDirURL = usersDirURL.appendingPathComponent(privateKey!.publicKey.String()).appendingPathComponent("whispers")
+		try FileManager.default.createDirectory(at: userDirURL, withIntermediateDirectories: true)
+		let dstURL = userDirURL.appendingPathComponent(url.lastPathComponent)
+		print("拷贝文件：", url, dstURL)
+		try FileManager.default.moveItem(at: url, to: dstURL)
+	}
 	
 	func updateFailedMessages(failed: [FailedMessage]) {
 		failed.forEach { f in

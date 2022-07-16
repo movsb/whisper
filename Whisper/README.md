@@ -146,3 +146,9 @@ SwiftUI
 ## 07.17
 
 分享页不能在已弹出页继续弹出的问题解决： [I'm trying to present a share sheet but it doesn't work when done from inside a sheet. : SwiftUI](https://www.reddit.com/r/SwiftUI/comments/qfs8x3/im_trying_to_present_a_share_sheet_but_it_doesnt/?utm_source=share&utm_medium=web2x&context=3)
+
+文件类型注册：
+
+* [Registering the File Types Your App Supports](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/DocumentInteraction_TopicsForIOS/Articles/RegisteringtheFileTypesYourAppSupports.html#//apple_ref/doc/uid/TP40010411-SW1)
+* [Technical Q&A QA1587: How do I get my application to show up in the Open in... menu.](https://developer.apple.com/library/archive/qa/qa1587/_index.html)
+

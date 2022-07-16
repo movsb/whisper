@@ -30,7 +30,7 @@ extension Data {
 		let date = Date()
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "yyyyMMdd-HHmmss"
-		let fileName = "Whisper-" + dateFormatter.string(from: date) + ".bin" // TODO: 这个后缀改成 .whisper 后不能用。
+		let fileName = "Whisper-" + dateFormatter.string(from: date) + ".whisper"
 		return try self.toTemporaryFile(fileName: fileName)
 	}
 }
