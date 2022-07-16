@@ -24,7 +24,10 @@ struct ComposeMessageView: View {
 	@EnvironmentObject var globalStates: GlobalStates
 	
 	@Binding var message: Message
-	@State var onClose: (()->Void)? = nil
+	
+	// 新消息页面的关闭按钮行为。
+	@State var onClose: ((_ keep: Bool)->Void)? = nil
+	@State private var showingKeepMessage = false
 	
 	@State private var showingAlert = false
 	@State private var alertMessage = ""
@@ -114,7 +117,19 @@ struct ComposeMessageView: View {
 			ToolbarItemGroup(placement: ToolbarItemPlacement.navigationBarLeading) {
 				if let onClose {
 					Button("Close") {
-						onClose()
+						showingKeepMessage = true
+						UIApplication.shared.endEditing()
+					}
+					.alert(isPresented: $showingKeepMessage) {
+						Alert(
+							title: Text("是否需要将消息保存到消息列表？"),
+							primaryButton: .default(Text("保存")) {
+								onClose(true)
+							},
+							secondaryButton: .cancel {
+								onClose(false)
+							}
+						)
 					}
 				}
 			}

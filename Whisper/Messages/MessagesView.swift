@@ -158,15 +158,17 @@ struct MessagesView: View {
 	}
 	
 	// TODO 提示是否需要保存。
-	private func closeNewMessage() {
+	private func closeNewMessage(keep: Bool) {
 		showingNewMessage = false
-		let m = Message(
-			id: newMessage.id,
-			title: newMessage.title,
-			receipients: newMessage.receipients,
-			content: newMessage.content
-		)
-		globalStates.messages.insert(m, at: 0)
+		if keep {
+			let m = Message(
+				id: newMessage.id,
+				title: newMessage.title,
+				receipients: newMessage.receipients,
+				content: newMessage.content
+			)
+			globalStates.messages.insert(m, at: 0)
+		}
 		newMessage.reset()
 	}
 	
@@ -211,7 +213,7 @@ struct ComposeNewMessageView: View {
 	@State var editMode: EditMode = .active
 	@Binding var message: Message
 	
-	let onClose: (()->Void)?
+	let onClose: ((_ keep: Bool)->Void)?
 	
 	var body: some View {
 		NavigationView {
