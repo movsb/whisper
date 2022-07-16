@@ -142,3 +142,7 @@ SwiftUI
 * [Why @State only works with structs - a free Hacking with iOS: SwiftUI Edition tutorial](https://www.hackingwithswift.com/books/ios-swiftui/why-state-only-works-with-structs)
 * [Managing Model Data in Your App | Apple Developer Documentation](https://developer.apple.com/documentation/swiftui/managing-model-data-in-your-app)
 
+
+## 07.17
+
+分享页不能在已弹出页继续弹出的问题解决： [I'm trying to present a share sheet but it doesn't work when done from inside a sheet. : SwiftUI](https://www.reddit.com/r/SwiftUI/comments/qfs8x3/im_trying_to_present_a_share_sheet_but_it_doesnt/?utm_source=share&utm_medium=web2x&context=3)

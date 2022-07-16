@@ -48,7 +48,14 @@ struct ComposeMessageView: View {
 			let fileURL = try encoded.toTemporaryFileWithDateName()
 			print("文件大小：", encoded.count, fileURL)
 			let activityController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-			UIApplication.shared.windows.first?.rootViewController!.present(activityController, animated: true, completion: nil)
+			let scenes = UIApplication.shared.connectedScenes
+			let windowScene = scenes.first as? UIWindowScene
+			var viewController = windowScene?.windows.first?.rootViewController
+			while let presented = viewController?.presentedViewController {
+				viewController = presented
+			}
+			viewController?.present(activityController, animated: true)
+			// 删除会无法分享。
 			// try? FileManager.default.removeItem(at: fileURL)
 		} catch {
 			alertMessage = error.localizedDescription
@@ -209,7 +216,6 @@ struct ComposeMessageView: View {
 		}
 	}
 	
-	// 其实不用 state 的，但是由于没写 init，会报错
 	@State private var imagesLoaded = false
 	@State private var videosLoaded = false
 	@FocusState private var contentFocused: Bool
