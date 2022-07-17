@@ -50,14 +50,29 @@ struct ComposeMessageView: View {
 			let encoded = try file.encode(sender: globalStates.privateKey!, fileKey: try! NewFileKey())
 			let fileURL = try encoded.toTemporaryFileWithDateName()
 			print("文件大小：", encoded.count, fileURL)
+			
 			let activityController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+			
 			let scenes = UIApplication.shared.connectedScenes
 			let windowScene = scenes.first as? UIWindowScene
 			var viewController = windowScene?.windows.first?.rootViewController
 			while let presented = viewController?.presentedViewController {
 				viewController = presented
 			}
+			
+			// iPad 上面这个是独立的弹窗，它需要有一定定点位置作为窗口停靠的参考。
+			// https://stackoverflow.com/a/67214882/3628322
+			if let controller = activityController.popoverPresentationController {
+				if controller.sourceView == nil {
+					print("popoverPresentationController is nil")
+					controller.permittedArrowDirections = .unknown
+					controller.sourceView = viewController?.view
+					controller.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2.1, y: UIScreen.main.bounds.height / 2.3, width: 200, height: 200)
+				}
+			}
+			
 			viewController?.present(activityController, animated: true)
+			
 			// 删除会无法分享。
 			// try? FileManager.default.removeItem(at: fileURL)
 		} catch {
@@ -222,6 +237,7 @@ struct ComposeMessageView: View {
 						selectedContacts: globalStates.contacts.filter{message.receipients.contains($0.publicKey)},
 						setNewContacts: setNewContacts(contacts:)
 					)
+					.frame(minWidth: isPad() ? 350 : 0, minHeight: isPad() ? 450 : 0)
 				}
 			}
 			.padding(.bottom)

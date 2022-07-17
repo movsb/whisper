@@ -42,6 +42,7 @@ struct ContactsList: View {
 				})
 				.popover(isPresented: $showCreate) {
 					NewContactView(contact: $newContact, contacts: $globalStates.contacts, showCreate: $showCreate)
+						.frame(minWidth: isPad() ? 350 : 0, minHeight: isPad() ? 350 : 0)
 				}
 			}
 		}

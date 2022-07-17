@@ -57,3 +57,6 @@ extension FileManager {
 	}
 }
 
+func isPad() -> Bool {
+	return UIDevice.current.userInterfaceIdiom == .pad
+}
