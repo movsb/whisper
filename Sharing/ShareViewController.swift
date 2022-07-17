@@ -104,7 +104,7 @@ class ShareViewController: UIViewController {
 						// TODO 官方文档说这里的 handler 是异步的
 						// https://developer.apple.com/documentation/foundation/nsitemprovider/1403900-loaditem
 						attachment.loadItem(forTypeIdentifier: ty, options: nil, completionHandler: { data, err in
-							if let err {
+							if let err = err {
 								// TODO 清理共享目录。
 								return self.showErrorAndExitAsync(message: "加载数据时出错：\(err.localizedDescription)")
 							}

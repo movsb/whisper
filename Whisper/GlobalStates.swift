@@ -100,7 +100,7 @@ class GlobalStates: ObservableObject {
 		try Data(privateKey!.String().utf8).write(to: privateKeyFile)
 	}
 	
-	func saveUserJson(name: String, data: Encodable) throws {
+	func saveUserJson<T>(name: String, data: T) throws where T: Encodable {
 		let data = try JSONEncoder().encode(data)
 		let outfile = try self.userDir().appendingPathComponent(name)
 		try data.write(to: outfile)
@@ -225,7 +225,7 @@ class GlobalStates: ObservableObject {
 	
 	func updateFailedMessages(failed: [FailedMessage]) {
 		failed.forEach { f in
-			if !failedMessages.contains{ $0.name == f.name } {
+			if !failedMessages.contains(where: { $0.name == f.name }) {
 				failedMessages.insert(f, at: 0)
 			}
 		}

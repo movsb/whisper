@@ -130,7 +130,7 @@ struct ComposeMessageView: View {
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
 			ToolbarItemGroup(placement: ToolbarItemPlacement.navigationBarLeading) {
-				if let onClose {
+				if let onClose = onClose {
 					Button("Close") {
 						showingKeepMessage = true
 						UIApplication.shared.endEditing()
@@ -369,7 +369,7 @@ struct ComposeMessageView: View {
 	private func doneSelectMedia(isPhoto: Bool, maybeUrl: URL?, maybeUiImage: UIImage?) {
 		// 需要在选择照片的弹窗关闭之后才能弹出告警框，所以使用了 async 方式。
 		func canAdd(photo: Bool, url: URL?) -> Bool {
-			if let url {
+			if let url = url {
 				if let fileSize = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize {
 					let sizeString = ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .binary)
 					let maxSizeString = ByteCountFormatter.string(fromByteCount: photo ? Int64(Limitations.maxImageSize) : Int64(Limitations.maxVideoSize), countStyle: .binary)

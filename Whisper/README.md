@@ -152,3 +152,11 @@ SwiftUI
 * [Registering the File Types Your App Supports](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/DocumentInteraction_TopicsForIOS/Articles/RegisteringtheFileTypesYourAppSupports.html#//apple_ref/doc/uid/TP40010411-SW1)
 * [Technical Q&A QA1587: How do I get my application to show up in the Open in... menu.](https://developer.apple.com/library/archive/qa/qa1587/_index.html)
 
+
+## 07.18
+
+### 审核
+
+各设备尺寸：
+- <https://www.ios-resolution.com/>
+- <https://help.apple.com/app-store-connect/#/devd274dd925>
