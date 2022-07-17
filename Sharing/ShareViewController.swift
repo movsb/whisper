@@ -190,14 +190,10 @@ class ShareViewController: UIViewController {
 		}
 		
 		print("已复制到路径：\(dstURL)")
-//		DispatchQueue.main.async {
-//			self.sharedData.alertOpenWhisperOKFn = open
-//			self.sharedData.alertOpenWhisperCancelFn = close
-//			self.sharedData.alertOpenWhisper = true
-//		}
-		
 		DispatchQueue.main.async {
-			open()
+			self.sharedData.alertOpenWhisperOKFn = open
+			self.sharedData.alertOpenWhisperCancelFn = close
+			self.sharedData.alertOpenWhisper = true
 		}
 		
 		func open() {

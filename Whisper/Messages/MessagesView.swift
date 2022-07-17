@@ -126,6 +126,11 @@ struct MessagesView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				Button(action: {
+					if globalStates.messages.count >= Limitations.maxNumberOfMessages {
+						alertMessage = "您目前只能保存最多 \(Limitations.maxNumberOfMessages) 条消息。"
+						showingAlert = true
+						return
+					}
 					showingNewMessage = true
 				}, label: {
 					Image(systemName: "plus")

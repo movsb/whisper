@@ -38,8 +38,8 @@ struct ComposeMessageView: View {
 			showingAlert = true
 			return
 		}
-		if message.receipients.count > 5 {
-			alertMessage = "不能选择超过 5 个设备"
+		if message.receipients.count > Limitations.maxNumberOfReceipients {
+			alertMessage = "不能选择超过 \(Limitations.maxNumberOfReceipients) 个设备。"
 			showingAlert = true
 			return
 		}
@@ -367,17 +367,66 @@ struct ComposeMessageView: View {
 	@State private var imageURLs: [URL] = []
 	@State private var videoURLs: [URL] = []
 	private func doneSelectMedia(isPhoto: Bool, maybeUrl: URL?, maybeUiImage: UIImage?) {
+		// 需要在选择照片的弹窗关闭之后才能弹出告警框，所以使用了 async 方式。
+		func canAdd(photo: Bool, url: URL?) -> Bool {
+			if let url {
+				if let fileSize = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+					let sizeString = ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .binary)
+					let maxSizeString = ByteCountFormatter.string(fromByteCount: photo ? Int64(Limitations.maxImageSize) : Int64(Limitations.maxVideoSize), countStyle: .binary)
+					if photo && fileSize > Limitations.maxImageSize {
+						DispatchQueue.main.async {
+							alertMessage = "选择的图片文件过大：\(sizeString) > \(maxSizeString)"
+							showingAlert = true
+						}
+						return false
+					}
+					if !photo && fileSize > Limitations.maxVideoSize {
+						DispatchQueue.main.async {
+							alertMessage = "选择的视频文件过大：\(sizeString) > \(maxSizeString)"
+							showingAlert = true
+						}
+						return false
+					}
+				}
+			}
+			if photo {
+				if imageURLs.count >= Limitations.maxNumberOfImages {
+					DispatchQueue.main.async {
+						alertMessage = "您目前只能添加最多 \(Limitations.maxNumberOfImages) 张图片。"
+						showingAlert = true
+					}
+					return false
+				}
+			}
+			if !photo && videoURLs.count >= Limitations.maxNumberOfVideos {
+				DispatchQueue.main.async {
+					alertMessage = "您目前只能添加最多 \(Limitations.maxNumberOfVideos) 条视频。"
+					showingAlert = true
+				}
+				return false
+			}
+			return true
+		}
 		do {
 			if let url = maybeUrl {
 				if isPhoto {
+					if !canAdd(photo: true, url: url) {
+						return
+					}
 					let url = try globalStates.saveMessageImage(messageID: message.id, srcURL: url)
 					imageURLs.append(url)
 				} else {
+					if !canAdd(photo: false, url: url) {
+						return
+					}
 					let url = try globalStates.saveMessageVideo(messageID: message.id, srcURL: url)
 					videoURLs.append(url)
 				}
 			}
 			if let uiImage = maybeUiImage {
+				if !canAdd(photo: true, url: nil) {
+					return
+				}
 				let url = try globalStates.saveMessageImage(messageID: message.id, uiImage: uiImage)
 				imageURLs.append(url)
 			}

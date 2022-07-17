@@ -312,3 +312,14 @@ class GlobalStates: ObservableObject {
 		loggedin = false
 	}
 }
+
+struct Limitations {
+	static let maxNumberOfMessages = 15
+	static let maxNumberOfImages = 5
+	static let maxNumberOfVideos = 1
+	static let maxNumberOfReceipients = 3
+	static let maxNumberOfContacts = 15
+	
+	static let maxImageSize = 5 << 20
+	static let maxVideoSize = 100 << 20
+}
