@@ -39,6 +39,10 @@ class GlobalStates: ObservableObject {
 			var container = encoder.container(keyedBy: CodingKeys.self)
 			try container.encode(enableFaceID, forKey: .enableFaceID)
 		}
+		
+		func reset() {
+			enableFaceID = false
+		}
 	}
 	
 	init() {}
@@ -303,12 +307,20 @@ class GlobalStates: ObservableObject {
 		}
 	}
 	
+	// 删除用户
+	func deleteAccount() throws {
+		let dir = try userDir()
+		try FileManager.default.removeItem(at: dir)
+		print("删除目录：", dir.description)
+	}
+	
 	// 清理登录状态
 	func signOut() {
 		removeLastUser()
 		messages = []
 		contacts = []
 		failedMessages = []
+		userSettings.reset()
 		loggedin = false
 	}
 }

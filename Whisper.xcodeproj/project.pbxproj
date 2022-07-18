@@ -703,9 +703,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Whisper/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "允许访问相机以拍照。";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "启用以登录。";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "允许访问麦克风以录制视频。";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "拍摄的照片仅用于作为消息附件发送。";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "启用以允许通过 FaceID 登录。";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "录制的视频仅用于作为消息附件发送。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -742,9 +743,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Whisper/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "允许访问相机以拍照。";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "启用以登录。";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "允许访问麦克风以录制视频。";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "拍摄的照片仅用于作为消息附件发送。";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "启用以允许通过 FaceID 登录。";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "录制的视频仅用于作为消息附件发送。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

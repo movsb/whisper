@@ -10,12 +10,15 @@ import LocalAuthentication
 
 struct Me: View {
 	@EnvironmentObject var globalStates: GlobalStates
+	@State private var alertShowing = false
+	@State private var alertMessage = ""
+	
 	@State private var alertSignout = false
 	
-	@State private var enableFaceID = false
+	@State private var alertDelete = false
+	@State private var alertConfirmPrivateKey = false
 	
-	init() {
-	}
+	@State private var enableFaceID = false
 	
 	static func biometricType() -> LABiometryType {
 		let authContext = LAContext()
@@ -111,6 +114,28 @@ struct Me: View {
 				}
 				Section {
 					Button(action: {
+						alertDelete = true
+					}, label: {
+						HStack {
+							Spacer()
+							Text("删除帐号")
+								.foregroundColor(.red)
+							Spacer()
+						}
+					})
+					.alert(isPresented: $alertDelete) {
+						Alert(
+							title: Text("您正在请求删除此帐号！"),
+							message: Text("“删除帐号”会永久地清空此帐号的所有数据，此操作不可撤销。"),
+							primaryButton: .destructive(Text("继续删除")) {
+								alertConfirmPrivateKey = true
+							},
+							secondaryButton: .cancel()
+						)
+					}
+				}
+				Section {
+					Button(action: {
 						alertSignout = true
 					}, label: {
 						HStack {
@@ -120,27 +145,59 @@ struct Me: View {
 							Spacer()
 						}
 					})
-				}
-			}
-			.alert(isPresented: $alertSignout) {
-				Alert(
-					title: Text("确认退出登录？"),
-					message: Text("如果你忘记了私钥，你将不能登录此帐号。请在确认退出前妥善保管你的私钥。"),
-					primaryButton: .destructive(Text("退出登录")) {
-						if globalStates.userSettings.enableFaceID {
-							Me.authenticate(succeeded: {
-								DispatchQueue.main.async {
+					.alert(isPresented: $alertSignout) {
+						Alert(
+							title: Text("确认退出登录？"),
+							message: Text("如果你忘记了私钥，你将不能登录此帐号。请在确认退出前妥善保管你的私钥。"),
+							primaryButton: .destructive(Text("退出登录")) {
+								if globalStates.userSettings.enableFaceID {
+									Me.authenticate(succeeded: {
+										DispatchQueue.main.async {
+											signOut()
+										}
+									}, failed: {})
+								} else {
 									signOut()
 								}
-							}, failed: {})
-						} else {
-							signOut()
-						}
-					},
-					secondaryButton: .cancel()
-				)
+							},
+							secondaryButton: .cancel()
+						)
+					}
+				}
+			}
+			.alert(isPresented: $alertShowing) {
+				Alert(title: Text(alertMessage))
 			}
 		}
+		.alert(isPresented: $alertConfirmPrivateKey, TextAlert(title: "请确认你的私钥", message: "") { result in
+			guard let result = result else {
+				return
+			}
+			if result != globalStates.privateKey!.String() {
+				alertMessage = "私钥不正确，将退出操作。"
+				alertShowing = true
+				return
+			}
+			if globalStates.userSettings.enableFaceID {
+				Me.authenticate(succeeded: {
+					DispatchQueue.main.async {
+						do {
+							try deleteAccount()
+						} catch {
+							alertMessage = error.localizedDescription
+							alertShowing = true
+						}
+					}
+				}, failed: {})
+			} else {
+				do {
+					try deleteAccount()
+				} catch {
+					alertMessage = error.localizedDescription
+					alertShowing = true
+				}
+			}
+		})
 		.onAppear {
 			// https://stackoverflow.com/a/65739423/3628322
 			enableFaceID = globalStates.userSettings.enableFaceID
@@ -153,6 +210,11 @@ struct Me: View {
 		try! globalStates.saveSettings()
 		globalStates.signOut()
 		// 这里不能清 privateKey，会崩溃。
+	}
+	
+	private func deleteAccount() throws {
+		try globalStates.deleteAccount()
+		globalStates.signOut()
 	}
 }
 
