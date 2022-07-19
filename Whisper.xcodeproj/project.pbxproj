@@ -73,6 +73,12 @@
 
 /* Begin PBXFileReference section */
 		2B088511286B460F00997C1D /* ComposeMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMessageView.swift; sourceTree = "<group>"; };
+		2B0A09F828874A000064DA36 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		2B0A09F928874A000064DA36 /* appstore.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appstore.png; sourceTree = "<group>"; };
+		2B0A09FA28874A000064DA36 /* 4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 4.png; sourceTree = "<group>"; };
+		2B0A09FB28874A000064DA36 /* 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2.png; sourceTree = "<group>"; };
+		2B0A09FC28874A000064DA36 /* 3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 3.png; sourceTree = "<group>"; };
+		2B0A09FD28874A000064DA36 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		2B14447B286F523D00990936 /* Sharing.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Sharing.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B144482286F523D00990936 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2B14448D286F90D300990936 /* SFSymbolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolsView.swift; sourceTree = "<group>"; };
@@ -151,6 +157,19 @@
 				2B14448D286F90D300990936 /* SFSymbolsView.swift */,
 			);
 			path = Contacts;
+			sourceTree = "<group>";
+		};
+		2B0A09F728874A000064DA36 /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				2B0A09F828874A000064DA36 /* index.html */,
+				2B0A09F928874A000064DA36 /* appstore.png */,
+				2B0A09FA28874A000064DA36 /* 4.png */,
+				2B0A09FB28874A000064DA36 /* 2.png */,
+				2B0A09FC28874A000064DA36 /* 3.png */,
+				2B0A09FD28874A000064DA36 /* 1.png */,
+			);
+			path = Web;
 			sourceTree = "<group>";
 		};
 		2B14447C286F523D00990936 /* Sharing */ = {
@@ -233,6 +252,7 @@
 		2BEC9340286869AA00B0BCCF = {
 			isa = PBXGroup;
 			children = (
+				2B0A09F728874A000064DA36 /* Web */,
 				2B8B5DD5287F1D6D00592709 /* TODO.md */,
 				2B6C8CB3286E182800A1CB8F /* WhisperTests */,
 				2B14447C286F523D00990936 /* Sharing */,
