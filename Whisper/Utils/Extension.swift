@@ -60,3 +60,10 @@ extension FileManager {
 func isPad() -> Bool {
 	return UIDevice.current.userInterfaceIdiom == .pad
 }
+
+extension CGFloat {
+	func almostEqual(to second: CGFloat) -> Bool {
+		return abs(self - second) < CGFloat.ulpOfOne
+	}
+}
+

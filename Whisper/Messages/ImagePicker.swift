@@ -10,6 +10,8 @@ import PhotosUI
 import AVKit
 
 struct ImageItemView: View {
+	@Environment(\.editMode) private var editMode
+	
 	private var isPhoto: Bool
 	private var imageURL: URL
 	
@@ -17,11 +19,12 @@ struct ImageItemView: View {
 	private var avPlayer: AVPlayer?
 	
 	@State private var playingVideo = false
+	
 	@State private var previewingImage = false
+	@State private var previewImageOffset = CGSize()
 	
-	@Environment(\.editMode) private var editMode
+	@State private var currentScale: CGFloat = 1
 	
-	// @GestureState var press = false
 	private var onDelete: () -> Void
 	
 	init(isPhoto: Bool, imageURL: URL, onDelete: @escaping ()->Void) {
@@ -54,6 +57,7 @@ struct ImageItemView: View {
 				.resizable(resizingMode: .stretch)
 				.onTapGesture {
 					if isPhoto {
+						previewImageOffset = .zero
 						previewingImage = true
 					}
 				}
@@ -81,15 +85,33 @@ struct ImageItemView: View {
 				.ignoresSafeArea()
 		}
 		.fullScreenCover(isPresented: $previewingImage) {
-			ZoomableScrollView {
+			ZoomableScrollView(currentScale: $currentScale) {
 				Image(uiImage: uiImage)
 					.resizable()
 					.aspectRatio(contentMode: .fit)
+					.offset(previewImageOffset)
 			}
 			.ignoresSafeArea()
-			.onTapGesture {
-				previewingImage = false
+			.onTapGesture(count: 2) {
+				print("双击")
+				currentScale = currentScale.almostEqual(to: 1.0) ? 2.0 : 1.0
 			}
+			.gesture(
+				DragGesture(minimumDistance: 0)
+					.onChanged { value in
+						print("当前移动距离：", value.translation.width, value.translation.height)
+						guard currentScale.almostEqual(to: 1.0) else {
+							return
+						}
+						previewImageOffset = CGSize(width: 0, height: value.translation.height)
+					}
+					.onEnded { value in
+						if value.translation.height > 60 {
+							previewingImage = false
+						}
+						previewImageOffset = .zero
+					}
+			)
 		}
 		.contextMenu(ContextMenu(menuItems: {
 			if editMode?.wrappedValue.isEditing ?? false {
@@ -201,21 +223,24 @@ struct ImagePickerView: View {
 }
 
 struct ImagePickerView_Previews: PreviewProvider {
+	@State static private var editMode: EditMode = .active
 	@State static private var images: [URL] = []
-	@State static private var image = ""
 	static private func done(isPhoto: Bool, url: URL?, uiImage: UIImage?) {
-		
+		if let url = url {
+			images.append(url)
+		}
 	}
 	static private func onDelete(url: URL) {
 		
 	}
 	static var previews: some View {
 		ImagePickerView(done: done, onDelete: onDelete(url:), mediaURLs: $images)
+			.environment(\.editMode, $editMode)
 	}
 }
 
 struct ImagePicker: UIViewControllerRepresentable {
-	@Environment(\.presentationMode) private var presentationMode
+	@Environment(\.dismiss) private var dismiss
 	
 	enum What {
 		case takePhoto
@@ -280,7 +305,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 		}
 		
 		func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-			parent.presentationMode.wrappedValue.dismiss()
+			parent.dismiss()
 			done(nil, nil)
 			print("取消选择图片")
 		}
@@ -305,7 +330,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 				print("mediaURL:", mediaURL.description)
 			}
 			
-			parent.presentationMode.wrappedValue.dismiss()
+			parent.dismiss()
 			
 			done(url, uiImage)
 			print("完成选择图片")
@@ -316,8 +341,11 @@ struct ImagePicker: UIViewControllerRepresentable {
 // https://stackoverflow.com/a/64110231/3628322
 struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 	private var content: Content
+	
+	@Binding var currentScale: CGFloat
 
-	init(@ViewBuilder content: () -> Content) {
+	init(currentScale: Binding<CGFloat>, @ViewBuilder content: () -> Content) {
+		self._currentScale = currentScale
 		self.content = content()
 	}
 
@@ -328,6 +356,8 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 		scrollView.maximumZoomScale = 20
 		scrollView.minimumZoomScale = 1
 		scrollView.bouncesZoom = true
+		scrollView.zoomScale = currentScale
+//		scrollView.backgroundColor = .clear
 
 		scrollView.showsHorizontalScrollIndicator = false
 		scrollView.showsVerticalScrollIndicator = false
@@ -338,31 +368,40 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 		hostedView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 		hostedView.frame = scrollView.bounds
 		scrollView.addSubview(hostedView)
-
 		return scrollView
 	}
 
-  func makeCoordinator() -> Coordinator {
-	return Coordinator(hostingController: UIHostingController(rootView: self.content))
-  }
-
-  func updateUIView(_ uiView: UIScrollView, context: Context) {
-	// update the hosting controller's SwiftUI content
-	context.coordinator.hostingController.rootView = self.content
-	assert(context.coordinator.hostingController.view.superview == uiView)
-  }
-
-  // MARK: - Coordinator
-
-  class Coordinator: NSObject, UIScrollViewDelegate {
-	var hostingController: UIHostingController<Content>
-
-	init(hostingController: UIHostingController<Content>) {
-	  self.hostingController = hostingController
+	func makeCoordinator() -> Coordinator {
+		return Coordinator(
+			zoomableScrollView: self,
+			hostingController: UIHostingController(rootView: self.content)
+		)
 	}
 
-	func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-	  return hostingController.view
+	func updateUIView(_ uiView: UIScrollView, context: Context) {
+		// update the hosting controller's SwiftUI content
+		context.coordinator.hostingController.rootView = self.content
+		uiView.setZoomScale(currentScale, animated: true)
+		assert(context.coordinator.hostingController.view.superview == uiView)
 	}
-  }
+
+	// MARK: - Coordinator
+
+	class Coordinator: NSObject, UIScrollViewDelegate {
+		var zoomableScrollView: ZoomableScrollView
+		var hostingController: UIHostingController<Content>
+
+		init(zoomableScrollView: ZoomableScrollView, hostingController: UIHostingController<Content>) {
+			self.zoomableScrollView = zoomableScrollView
+			self.hostingController = hostingController
+//			hostingController.view.backgroundColor = UIColor.clear
+		}
+
+		func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+			return hostingController.view
+		}
+		func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+			zoomableScrollView.currentScale = scale
+		}
+	}
 }

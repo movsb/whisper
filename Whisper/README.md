@@ -162,3 +162,10 @@ SwiftUI
 - <https://help.apple.com/app-store-connect/#/devd274dd925>
 
 显示开始结束时间：`for commit in f08f261 f417e38; do git log -1 --format=reference $commit; done`
+
+## 07.19
+
+状态管理：
+
+* [ios - Pass state/binding to UIViewRepresentable - Stack Overflow](https://stackoverflow.com/a/61969628/3628322)
+  - 如果在自定义 View 中实现状态变量的绑定。
