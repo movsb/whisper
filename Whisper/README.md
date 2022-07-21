@@ -169,3 +169,11 @@ SwiftUI
 
 * [ios - Pass state/binding to UIViewRepresentable - Stack Overflow](https://stackoverflow.com/a/61969628/3628322)
   - 如果在自定义 View 中实现状态变量的绑定。
+
+## 07.22
+
+手势操作：
+
+* [How to make two gestures recognize at the same time using simultaneousGesture() - a free SwiftUI by Example tutorial](https://www.hackingwithswift.com/quick-start/swiftui/how-to-make-two-gestures-recognize-at-the-same-time-using-simultaneousgesture)
+  * 使用同步手势解决 tap 和 drag 同时存在的情况下不流畅/卡顿的问题
+

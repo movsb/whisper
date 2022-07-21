@@ -96,7 +96,7 @@ struct ImageItemView: View {
 				print("双击")
 				currentScale = currentScale.almostEqual(to: 1.0) ? 2.0 : 1.0
 			}
-			.gesture(
+			.simultaneousGesture(
 				DragGesture(minimumDistance: 0)
 					.onChanged { value in
 						print("当前移动距离：", value.translation.width, value.translation.height)
