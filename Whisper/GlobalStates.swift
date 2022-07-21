@@ -323,6 +323,10 @@ class GlobalStates: ObservableObject {
 		userSettings.reset()
 		loggedin = false
 	}
+	
+	func shouldLimit() -> Bool {
+		return Whisper.shouldLimit(publicKey: privateKey!.publicKey.String())
+	}
 }
 
 struct Limitations {
@@ -334,4 +338,11 @@ struct Limitations {
 	
 	static let maxImageSize = 5 << 20
 	static let maxVideoSize = 100 << 20
+}
+
+func shouldLimit(publicKey: String) -> Bool {
+	if publicKey == "pK7qkLEE6TKEBRsdMMGfTn4TPpPAjIvIz7V9MRc7mnI" {
+		return false
+	}
+	return true
 }

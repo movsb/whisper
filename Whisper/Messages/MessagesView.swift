@@ -126,7 +126,7 @@ struct MessagesView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				Button(action: {
-					if globalStates.messages.count >= Limitations.maxNumberOfMessages {
+					if globalStates.shouldLimit() && globalStates.messages.count >= Limitations.maxNumberOfMessages {
 						alertMessage = "您目前只能保存最多 \(Limitations.maxNumberOfMessages) 条消息。"
 						showingAlert = true
 						return
@@ -140,6 +140,7 @@ struct MessagesView: View {
 				}
 			}
 		}
+		.currentDeviceNavigationViewStyle()
 		.onOpenURL { url in
 			print("OpenURL:", url)
 			if url.path.contains("/Documents/Inbox/") {

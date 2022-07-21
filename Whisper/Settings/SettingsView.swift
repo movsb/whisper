@@ -50,6 +50,7 @@ struct SettingsView: View {
 				}
 			}
 		}
+		.currentDeviceNavigationViewStyle()
 	}
 	
 	private var techDetails: some View {

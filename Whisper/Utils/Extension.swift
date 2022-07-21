@@ -67,3 +67,16 @@ extension CGFloat {
 	}
 }
 
+// https://stackoverflow.com/a/59145417/3628322
+extension View {
+	@ViewBuilder
+	public func currentDeviceNavigationViewStyle() -> some View {
+		GeometryReader { value in
+			if value.size.height > value.size.width {
+				self.navigationViewStyle(.stack)
+			} else {
+				self.navigationViewStyle(.columns)
+			}
+		}
+	}
+}

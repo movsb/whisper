@@ -38,7 +38,7 @@ struct ComposeMessageView: View {
 			showingAlert = true
 			return
 		}
-		if message.receipients.count > Limitations.maxNumberOfReceipients {
+		if globalStates.shouldLimit() && message.receipients.count > Limitations.maxNumberOfReceipients {
 			alertMessage = "不能选择超过 \(Limitations.maxNumberOfReceipients) 个设备。"
 			showingAlert = true
 			return
@@ -373,14 +373,14 @@ struct ComposeMessageView: View {
 				if let fileSize = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize {
 					let sizeString = ByteCountFormatter.string(fromByteCount: Int64(fileSize), countStyle: .binary)
 					let maxSizeString = ByteCountFormatter.string(fromByteCount: photo ? Int64(Limitations.maxImageSize) : Int64(Limitations.maxVideoSize), countStyle: .binary)
-					if photo && fileSize > Limitations.maxImageSize {
+					if globalStates.shouldLimit() && photo && fileSize > Limitations.maxImageSize {
 						DispatchQueue.main.async {
 							alertMessage = "选择的图片文件过大：\(sizeString) > \(maxSizeString)"
 							showingAlert = true
 						}
 						return false
 					}
-					if !photo && fileSize > Limitations.maxVideoSize {
+					if globalStates.shouldLimit() && !photo && fileSize > Limitations.maxVideoSize {
 						DispatchQueue.main.async {
 							alertMessage = "选择的视频文件过大：\(sizeString) > \(maxSizeString)"
 							showingAlert = true
@@ -390,7 +390,7 @@ struct ComposeMessageView: View {
 				}
 			}
 			if photo {
-				if imageURLs.count >= Limitations.maxNumberOfImages {
+				if globalStates.shouldLimit() && imageURLs.count >= Limitations.maxNumberOfImages {
 					DispatchQueue.main.async {
 						alertMessage = "您目前只能添加最多 \(Limitations.maxNumberOfImages) 张图片。"
 						showingAlert = true
@@ -398,7 +398,7 @@ struct ComposeMessageView: View {
 					return false
 				}
 			}
-			if !photo && videoURLs.count >= Limitations.maxNumberOfVideos {
+			if globalStates.shouldLimit() && !photo && videoURLs.count >= Limitations.maxNumberOfVideos {
 				DispatchQueue.main.async {
 					alertMessage = "您目前只能添加最多 \(Limitations.maxNumberOfVideos) 条视频。"
 					showingAlert = true

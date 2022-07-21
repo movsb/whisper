@@ -46,6 +46,7 @@ struct ContactsList: View {
 				}
 			}
 		}
+		.currentDeviceNavigationViewStyle()
 	}
 	
 	private func delete(at offsets: IndexSet) {
