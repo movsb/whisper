@@ -224,7 +224,7 @@ struct File {
 //		}
 		let encryptedMessage = d[0..<nContent]
 		let combined = try DecryptMessage(encrypted: [UInt8](encryptedMessage), fileKey: fileKey!)
-		let parts = combined.split(separator: "\0")
+		let parts = combined.split(separator: "\0", omittingEmptySubsequences: false)
 		let title = String(parts[0])
 		var content = ""
 		if parts.count == 2 {
