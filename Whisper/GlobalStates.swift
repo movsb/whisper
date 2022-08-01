@@ -191,10 +191,13 @@ class GlobalStates: ObservableObject {
 			if !FileManager.default.isReadableFile(atPath: pathURL.path) {
 				return
 			}
-			let data = try Data(contentsOf: pathURL)
 			var messageId: UUID? = nil
+			let fileReader = try FileReader(pathURL)
+			defer {
+				try? fileReader.close()
+			}
 			do {
-				let file = try File.decode(data: data, recipient: privateKey!)
+				let file = try ArchiveReader(fileReader, identity: Identity(privateKey!)).read()
 				let message = Message(title: file.title, receipients: [privateKey!.publicKey.String()], content: file.content)
 				messageId = message.id
 				for url in file.images {
@@ -336,6 +339,8 @@ struct Limitations {
 	static let maxNumberOfReceipients = 3
 	static let maxNumberOfContacts = 15
 	
+	static let maxTitleCharacters = 1 << 10
+	static let maxContentCharacters = 1 << 20
 	static let maxImageSize = 5 << 20
 	static let maxVideoSize = 100 << 20
 }

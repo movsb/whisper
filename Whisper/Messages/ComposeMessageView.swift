@@ -44,14 +44,23 @@ struct ComposeMessageView: View {
 			return
 		}
 		
+		func toTemporaryFileWithDateName() -> URL {
+			let date = Date()
+			let dateFormatter = DateFormatter()
+			dateFormatter.dateFormat = "yyyyMMdd-HHmmss"
+			let fileName = "Whisper-" + dateFormatter.string(from: date) + ".whisper"
+			return FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+		}
+		
 		do {
 			let recipients = globalStates.contacts.filter { contact in message.receipients.contains(contact.publicKey) }.map{PublicKey.fromString(s: $0.publicKey)!}
-			let file = File(fileHeader: kFileHeader, recipients: recipients, title: message.title, content: message.content, images: imageURLs, videos: videoURLs)
-			let encoded = try file.encode(sender: globalStates.privateKey!, fileKey: try! NewFileKey())
-			let fileURL = try encoded.toTemporaryFileWithDateName()
-			print("文件大小：", encoded.count, fileURL)
+			let file = File(recipients: recipients, title: message.title, content: message.content, images: imageURLs, videos: videoURLs)
+			let handle = try FileWriter(toTemporaryFileWithDateName())
+			let archiver = ArchiveWriter(handle, sender: globalStates.privateKey!, fileKey: try! FileKey())
+			try archiver.write(file: file)
+			try handle.close()
 			
-			let activityController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+			let activityController = UIActivityViewController(activityItems: [handle.URL()], applicationActivities: nil)
 			
 			let scenes = UIApplication.shared.connectedScenes
 			let windowScene = scenes.first as? UIWindowScene

@@ -63,7 +63,7 @@ struct SettingsView: View {
 }
 
 struct SettingsView_Previews: PreviewProvider {
-	@StateObject static private var globalStates = GlobalStates(privateKey: NewPrivateKey())
+	@StateObject static private var globalStates = GlobalStates(privateKey: PrivateKey())
 	static var previews: some View {
 		SettingsView()
 			.environmentObject(globalStates)

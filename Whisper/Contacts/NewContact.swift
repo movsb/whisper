@@ -33,7 +33,6 @@ struct NewContactView: View {
 			nameFocused = true
 			return
 		}
-		// pubKeyStr = NewPrivateKey().publicKey.String()
 		guard let pubKey = PublicKey.fromString(s: pubKeyStr) else {
 			alertMessage = "无效的公钥"
 			showingAlert = true

@@ -51,7 +51,7 @@ struct WelcomeView: View {
 	}
 	
 	private func newUser() {
-		globalStates.privateKey = NewPrivateKey()
+		globalStates.privateKey = PrivateKey()
 		do {
 			try globalStates.createUserDir()
 			try globalStates.saveUserPrivateKey()
