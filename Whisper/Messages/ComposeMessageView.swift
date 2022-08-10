@@ -54,10 +54,10 @@ struct ComposeMessageView: View {
 		
 		do {
 			let recipients = globalStates.contacts.filter { contact in message.receipients.contains(contact.publicKey) }.map{PublicKey.fromString(s: $0.publicKey)!}
-			let file = File(recipients: recipients, title: message.title, content: message.content, images: imageURLs, videos: videoURLs)
+			let file = File(title: message.title, content: message.content, images: imageURLs, videos: videoURLs)
 			let handle = try FileWriter(toTemporaryFileWithDateName())
 			let archiver = ArchiveWriter(handle, sender: globalStates.privateKey!, fileKey: try! FileKey())
-			try archiver.write(file: file)
+			try archiver.write(file: file, recipients: recipients)
 			try handle.close()
 			
 			let activityController = UIActivityViewController(activityItems: [handle.URL()], applicationActivities: nil)
@@ -69,7 +69,8 @@ struct ComposeMessageView: View {
 				viewController = presented
 			}
 			
-			// iPad 上面这个是独立的弹窗，它需要有一定定点位置作为窗口停靠的参考。
+			// iPad 上面这个是独立的弹窗，它需要有一个定点位置作为窗口停靠的参考。
+			// 目前不知道怎么从 SwiftUI 中获取此按钮的位置，只能随便计算一个位置。
 			// https://stackoverflow.com/a/67214882/3628322
 			if let controller = activityController.popoverPresentationController {
 				if controller.sourceView == nil {

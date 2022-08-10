@@ -15,17 +15,13 @@ let kMaxTitle = 1 << 10
 let kMaxContent = 1 << 20
 
 struct File {
-	// 接收人列表
-	var recipients: [PublicKey]
-	
 	var title: String
 	var content: String
 	
 	var images: [URL]
 	var videos: [URL]
 	
-	init(recipients: [PublicKey], title: String, content: String, images: [URL], videos: [URL]) {
-		self.recipients = recipients
+	init(title: String, content: String, images: [URL], videos: [URL]) {
 		self.title = title
 		self.content = content
 		self.images = images
@@ -47,7 +43,7 @@ struct ArchiveWriter {
 	}
 	
 	// 不会对文本长度、文件大小等做限制，需要在外部判断。
-	func write(file: File) throws {
+	func write(file: File, recipients: [PublicKey]) throws {
 		// 文件头
 		try w.write(kFileHeader, withLength: false)
 		
@@ -55,13 +51,13 @@ struct ArchiveWriter {
 		try w.write(sender.publicKey.rawRepresentation)
 		
 		// 接收设备个数
-		if file.recipients.count <= 0 {
+		if recipients.count <= 0 {
 			throw "接收设备不可为空"
 		}
-		try w.write(file.recipients.count)
+		try w.write(recipients.count)
 		
 		// 用各设备公钥加密的 FileKey
-		for p in file.recipients {
+		for p in recipients {
 			let key = try Recipient(p).EncryptFileKey(fileKey, using: sender)
 			try w.write(key, withLength: true)
 		}
@@ -149,7 +145,7 @@ struct ArchiveReader {
 		
 		try sr.close()
 		
-		return File(recipients:[], title: title, content: content, images: images, videos: videos)
+		return File(title: title, content: content, images: images, videos: videos)
 	}
 	
 	// TODO 限制最大读取长度
