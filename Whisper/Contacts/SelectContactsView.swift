@@ -10,14 +10,8 @@ import SwiftUI
 struct ContactWithSelectionView: View {
 	let contact: Contact
 	let onChange: (_ value: Bool) -> Void
-	@State var selected: Bool = false
 	
-	init(contact: Contact, onChange: @escaping (_: Bool) -> Void, selected: Bool) {
-		self.contact = contact
-		self.onChange = onChange
-		self._selected = .init(initialValue: selected)
-		print("初始化 ContactWithSelectionView", contact, selected)
-	}
+	@State private var selected = false
 	
 	var body: some View {
 		HStack {
@@ -44,35 +38,25 @@ struct ContactWithSelectionView_Previews: PreviewProvider {
 		print(value)
 	}
 	static var previews: some View {
-		ContactWithSelectionView(contact: contact, onChange: onChange(value:), selected: true)
+		ContactWithSelectionView(contact: contact, onChange: onChange(value:))
 	}
 }
 
 struct SelectContactsView: View {
-	@Binding private var showPopover: Bool
-	@State private var distinctContacts: [Contact]
-	@State private var selectedContacts: [Contact]
+	@Environment(\.dismiss) private var dismiss
 	
-	let setNewContacts: ([Contact]) -> Void
+	@State var contacts: [Contact]
+	@State private var selectedContacts = [Contact]()
 	
-	init(showPopover: Binding<Bool>, distinctContacts: [Contact], selectedContacts: [Contact], setNewContacts:@escaping (_ contacts: [Contact]) -> Void) {
-		self._showPopover = showPopover
-		self.setNewContacts = setNewContacts
-		self.distinctContacts = distinctContacts
-		self.selectedContacts = selectedContacts
-		
-		print("初始化 SelectContactsView", distinctContacts, selectedContacts)
-	}
+	var onSend: (_ contacts: [Contact]) -> Void
 	
-	typealias _OnChange = (Bool) -> Void
-	func onChange(_ pubKey: String) -> _OnChange {
+	func onChange(_ pubKey: String) -> (Bool) -> Void {
 		{ (value: Bool) in
 			if value {
-				self.selectedContacts.append(self.distinctContacts.first(where: {$0.publicKey == pubKey})!)
+				self.selectedContacts.append(self.contacts.first(where: {$0.publicKey == pubKey})!)
 			} else {
 				self.selectedContacts.removeAll(where: {$0.publicKey == pubKey})
 			}
-			print(self.selectedContacts)
 		}
 	}
 	
@@ -80,45 +64,44 @@ struct SelectContactsView: View {
 		VStack {
 			HStack {
 				Button("取消") {
-					showPopover = false
+					selectedContacts.removeAll()
+					dismiss()
 				}
 				Spacer()
 				Text("选择接收设备")
-					.font(.headline)
+					.font(.title3)
 					.bold()
 				Spacer()
-				Button("完成") {
-					setNewContacts(selectedContacts)
-					showPopover = false
+				Button("发送") {
+					dismiss()
 				}
+				.disabled(selectedContacts.isEmpty)
 			}
 			.padding([.top, .leading, .trailing])
 			VStack {
-				if distinctContacts.isEmpty {
+				if contacts.isEmpty {
 					Spacer()
 					Text("没有设备")
 						.foregroundColor(.gray)
 					Spacer()
 				} else {
-					List(distinctContacts) { contact in
+					List(contacts) { contact in
 						ContactWithSelectionView(
 							contact: contact,
-							onChange: onChange(contact.publicKey),
-							selected: includes(contacts: selectedContacts, contact: contact)
+							onChange: onChange(contact.publicKey)
 						)
 					}
 				}
 			}
 		}
-		.onAppear() {
+		.onDisappear {
+			DispatchQueue.main.async {
+				if !selectedContacts.isEmpty {
+					onSend(selectedContacts)
+				}
+			}
 		}
 	}
-}
-
-func includes(contacts: [Contact], contact: Contact) -> Bool {
-	let exist = contacts.contains(where: {$0.publicKey == contact.publicKey})
-	print("判断存在性", contacts, contact, exist)
-	return exist
 }
 
 struct SelectContactsView_Previews: PreviewProvider {
@@ -127,15 +110,10 @@ struct SelectContactsView_Previews: PreviewProvider {
 		Contact(name: "Name2", publicKey: "pk2"),
 		Contact(name: "Name3", publicKey: "pk3"),
 	]
-	static private var selctedContacts = [
-		Contact(name: "Name2", publicKey: "pk2"),
-	]
-	static private func setNewContacts(contacts: [Contact]) {
+	static private func onSend(_ contacts: [Contact]) {
 		print(contacts)
 	}
-	@State static private var showPopover = false
-	
 	static var previews: some View {
-		SelectContactsView(showPopover: $showPopover, distinctContacts: [], selectedContacts: selctedContacts, setNewContacts: setNewContacts(contacts:))
+		SelectContactsView(contacts: contacts, onSend: onSend(_:))
 	}
 }

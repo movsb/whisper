@@ -7,19 +7,6 @@
 
 import SwiftUI
 
-struct MiniContactView: View {
-	var contact: Contact
-	var body: some View {
-		VStack {
-			Image(systemName: contact.avatar)
-				.resizable()
-				.frame(width: 20, height: 20)
-			Text(contact.name)
-				.font(.footnote)
-		}
-	}
-}
-
 struct ComposeMessageView: View {
 	@EnvironmentObject var globalStates: GlobalStates
 	
@@ -32,12 +19,9 @@ struct ComposeMessageView: View {
 	@State private var showingAlert = false
 	@State private var alertMessage = ""
 	
-	func shareButton() {
-		if message.receipients.count <= 0 {
-			alertMessage = "请选择接收设备"
-			showingAlert = true
-			return
-		}
+	@State private var showSelectContacts = false
+	
+	private func onSend(_ contacts: [Contact]) {
 		if globalStates.shouldLimit() && message.receipients.count > Limitations.maxNumberOfReceipients {
 			alertMessage = "不能选择超过 \(Limitations.maxNumberOfReceipients) 个设备。"
 			showingAlert = true
@@ -53,7 +37,7 @@ struct ComposeMessageView: View {
 		}
 		
 		do {
-			let recipients = globalStates.contacts.filter { contact in message.receipients.contains(contact.publicKey) }.map{PublicKey.fromString(s: $0.publicKey)!}
+			let recipients = contacts.map{PublicKey.fromString(s: $0.publicKey)!}
 			let file = File(title: message.title, content: message.content, images: imageURLs, videos: videoURLs)
 			let handle = try FileWriter(toTemporaryFileWithDateName())
 			let archiver = ArchiveWriter(handle, sender: globalStates.privateKey!, fileKey: try! FileKey())
@@ -92,19 +76,6 @@ struct ComposeMessageView: View {
 		}
 	}
 	
-	@State var messageContacts: [Contact]
-	@State private var showSelectContacts = false
-	
-	func setNewContacts(contacts: [Contact]) {
-		messageContacts.removeAll()
-		message.receipients.removeAll()
-		for c in contacts {
-			messageContacts.append(c)
-			message.receipients.append(c.publicKey)
-		}
-		print("设置新设备：", message.receipients)
-	}
-	
 	@FocusState private var titleFocused: Bool
 	@Environment(\.editMode) private var editMode
 	
@@ -129,9 +100,6 @@ struct ComposeMessageView: View {
 					// 刚进入或者退出编辑模式
 					initSelect()
 				}
-			}
-			if isEditing() {
-				makeContactsView()
 			}
 			makeContentView()
 		}
@@ -163,11 +131,11 @@ struct ComposeMessageView: View {
 			HStack {
 				Button(action: {
 					UIApplication.shared.endEditing()
-					shareButton()
+					showSelectContacts = true
 				}, label: {
 					Image(systemName: "square.and.arrow.up")
 				})
-				.opacity(isEditing() ? 1 : 0)
+//				.opacity(isEditing() ? 1 : 0)
 				.disabled(!imagesLoaded || !videosLoaded)
 				EditButton()
 			}
@@ -178,7 +146,6 @@ struct ComposeMessageView: View {
 		.onAppear {
 			message.read = true
 			print("标识消息为已读状态", message.read)
-			messageContacts = globalStates.contacts.filter{message.receipients.contains($0.publicKey)}
 			if onClose != nil {
 				titleFocused = true
 			}			// 预览时无效
@@ -215,46 +182,11 @@ struct ComposeMessageView: View {
 				}
 			}
 		}
+		.popover(isPresented: $showSelectContacts) {
+			SelectContactsView(contacts: globalStates.contacts, onSend: onSend(_:))
+			.frame(minWidth: isPad() ? 350 : 0, minHeight: isPad() ? 450 : 0)
+		}
 		Spacer()
-	}
-	
-	private func makeContactsView() -> some View {
-		Group {
-			HStack {
-				Text("接收设备：").bold()
-				Spacer()
-			}
-			HStack {
-				ScrollView(.horizontal) {
-					HStack {
-						ForEach($messageContacts) { $contact in
-							MiniContactView(contact: contact)
-						}
-					}
-				}
-				Button(action: {
-					UIApplication.shared.endEditing()
-					showSelectContacts = true
-				}, label: {
-					Image(systemName: "plus")
-						.resizable()
-						.frame(width: 20, height: 20)
-				})
-				.popover(isPresented: $showSelectContacts) {
-					SelectContactsView(
-						showPopover: $showSelectContacts,
-						distinctContacts: globalStates.contacts,
-						selectedContacts: globalStates.contacts.filter{message.receipients.contains($0.publicKey)},
-						setNewContacts: setNewContacts(contacts:)
-					)
-					.frame(minWidth: isPad() ? 350 : 0, minHeight: isPad() ? 450 : 0)
-				}
-			}
-			.padding(.bottom)
-		}
-		.onTapGesture {
-			UIApplication.shared.endEditing()
-		}
 	}
 	
 	@State private var imagesLoaded = false
@@ -462,17 +394,11 @@ struct ComposeMessageView: View {
 
 struct ComposeMessageView_Previews: PreviewProvider {
 	@State static var message = Message.example()
-	@State static var contacts = [Contact.example()]
 	@StateObject static var globalStates = GlobalStates()
 	@State static var editMode: EditMode = .active
 	static var previews: some View {
 		NavigationView {
-			ComposeMessageView(
-				message: $message,
-				messageContacts: contacts.filter{
-					message.receipients.contains($0.publicKey)
-				}
-			)
+			ComposeMessageView(message: $message)
 			.environment(\.editMode, $editMode)
 		}
 		.onAppear {

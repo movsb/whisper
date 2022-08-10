@@ -23,7 +23,7 @@ class Message: Identifiable, Codable {
 	var id = UUID()
 	
 	var title: String
-	var receipients: [String]
+	var receipients: [String] // TODO: 移除
 	var content: String
 	var read: Bool = true
 	
@@ -111,9 +111,7 @@ struct MessagesView: View {
 						.onDelete(perform: deleteFailed(at:))
 						ForEach($globalStates.messages) { $message in
 							NavigationLink {
-								ComposeMessageView(message: $message, messageContacts: globalStates.contacts.filter{
-									message.receipients.contains($0.publicKey)
-								})
+								ComposeMessageView(message: $message)
 							} label: {
 								MessageRow(message: $message)
 							}
@@ -241,7 +239,7 @@ struct ComposeNewMessageView: View {
 	
 	var body: some View {
 		NavigationView {
-			ComposeMessageView(message: $message, onClose: onClose, messageContacts: [])
+			ComposeMessageView(message: $message, onClose: onClose)
 				.environment(\.editMode, $editMode)
 		}
 	}
