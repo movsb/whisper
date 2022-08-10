@@ -22,7 +22,7 @@ struct ComposeMessageView: View {
 	@State private var showSelectContacts = false
 	
 	private func onSend(_ contacts: [Contact]) {
-		if globalStates.shouldLimit() && message.receipients.count > Limitations.maxNumberOfReceipients {
+		if globalStates.shouldLimit() && contacts.count > Limitations.maxNumberOfReceipients {
 			alertMessage = "不能选择超过 \(Limitations.maxNumberOfReceipients) 个设备。"
 			showingAlert = true
 			return
@@ -145,7 +145,6 @@ struct ComposeMessageView: View {
 		}
 		.onAppear {
 			message.read = true
-			print("标识消息为已读状态", message.read)
 			if onClose != nil {
 				titleFocused = true
 			}			// 预览时无效

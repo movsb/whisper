@@ -177,3 +177,9 @@ SwiftUI
 * [How to make two gestures recognize at the same time using simultaneousGesture() - a free SwiftUI by Example tutorial](https://www.hackingwithswift.com/quick-start/swiftui/how-to-make-two-gestures-recognize-at-the-same-time-using-simultaneousgesture)
   * 使用同步手势解决 tap 和 drag 同时存在的情况下不流畅/卡顿的问题
 
+## 08.11
+
+状态管理：
+
+* [Swift UI Property Wrappers](https://swiftuipropertywrappers.com/)
+

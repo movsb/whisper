@@ -19,45 +19,70 @@ class FailedMessage: Identifiable {
 	}
 }
 
-class Message: Identifiable, Codable {
+class Message: Identifiable, Codable, ObservableObject {
 	var id = UUID()
 	
-	var title: String
-	var receipients: [String] // TODO: 移除
-	var content: String
-	var read: Bool = true
+	@Published var title: String
+	@Published var content: String
+	@Published var read: Bool = true
 	
 	func reset() {
 		id = UUID()
 		title = ""
 		content = ""
-		receipients = []
 		read = false
 	}
 	
 	convenience init() {
-		self.init(title: "", receipients: [], content: "")
+		self.init(title: "", content: "")
 	}
 	
-	init(id: UUID = UUID(), title: String, receipients: [String], content: String) {
+	init(id: UUID = UUID(), title: String, content: String) {
 		self.id = id
 		self.title = title
-		self.receipients = receipients
 		self.content = content
 	}
 	
+	enum CodingKeys: CodingKey {
+		case id
+		case title
+		case content
+		case read
+	}
+	
+	required init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		id = try container.decode(UUID.self, forKey: .id)
+		title = try container.decode(String.self, forKey: .title)
+		content = try container.decode(String.self, forKey: .content)
+		read = try container.decode(Bool.self, forKey: .read)
+	}
+	
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(id, forKey: .id)
+		try container.encode(title, forKey: .title)
+		try container.encode(content, forKey: .content)
+		try container.encode(read, forKey: .read)
+	}
+	
+	
 	static func example() -> Message {
-		return Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "内容\n内容")
+		return Message(title: "title", content: "内容\n内容")
 	}
 	static func exampleUnread() -> Message {
-		let m = Message(title: "title", receipients: ["9qVe6CQfdzBYQ55DT_BMTkcMYB-dN-cB2wDh1mhjHgY"], content: "内容")
+		let m = Message(title: "title", content: "内容")
 		m.read = false
 		return m
 	}
 }
 
 struct MessageRow: View {
-	@Binding var message: Message
+	// 搞不懂为什么这里不能用 @Binding
+	// 如果用，会出现红点不能清除的问题
+	// read 为 true，但是在 onAppear 里面打印出来却是 false
+	@ObservedObject var message: Message
+	
 	var body: some View {
 		HStack {
 			Image(systemName: message.read ? "" : "circle.fill")
@@ -113,7 +138,7 @@ struct MessagesView: View {
 							NavigationLink {
 								ComposeMessageView(message: $message)
 							} label: {
-								MessageRow(message: $message)
+								MessageRow(message: message)
 							}
 						}
 						.onDelete(perform: delete(at:))
@@ -186,7 +211,6 @@ struct MessagesView: View {
 			let m = Message(
 				id: newMessage.id,
 				title: newMessage.title,
-				receipients: newMessage.receipients,
 				content: newMessage.content
 			)
 			globalStates.messages.insert(m, at: 0)

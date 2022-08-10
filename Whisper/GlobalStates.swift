@@ -198,7 +198,7 @@ class GlobalStates: ObservableObject {
 			}
 			do {
 				let file = try ArchiveReader(fileReader, identity: Identity(privateKey!)).read()
-				let message = Message(title: file.title, receipients: [privateKey!.publicKey.String()], content: file.content)
+				let message = Message(title: file.title, content: file.content)
 				messageId = message.id
 				for url in file.images {
 					let _ = try saveMessageImage(messageID: message.id, srcURL: url)
